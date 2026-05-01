@@ -164,28 +164,57 @@ def build_silhouette(width: int, height: int) -> dict:
         sy + PX(crema_off_y) + PX(crema_r_y),
     ], fill=255)
 
-    # ---- Spoon: rounded rectangle + small head, rotated ----
+    # ---- Spoon: oval bowl + tapered handle, like a real teaspoon ----
+    # Bowl rests near the cup edge; handle extends out across the saucer
+    # toward the upper-left.
     spoon_mask = Image.new("L", (width, height), 0)
     sd = ImageDraw.Draw(spoon_mask)
-    spoon_angle = math.radians(-32)
-    spoon_cx_mm = saucer_cx_mm - 38
-    spoon_cy_mm = saucer_cy_mm - 38
-    spoon_cx_px = PX(spoon_cx_mm)
-    spoon_cy_px = PX(spoon_cy_mm)
-    spoon_length_px = PX(78)
-    spoon_width_px = PX(7)
+
+    # Geometry (mm)
+    bowl_length_mm = 18
+    bowl_width_mm = 12
+    handle_length_mm = 56
+    handle_w_bowl_mm = 5.5    # at the bowl junction
+    handle_w_tip_mm = 3.0     # at the far tip
+    handle_inset_mm = 2.0     # handle starts slightly inside the bowl edge
+
+    # Bowl center placement — just inside the cup, biased toward upper-left
+    bowl_cx_mm = saucer_cx_mm - 14
+    bowl_cy_mm = saucer_cy_mm - 18
+    bowl_cx_px = PX(bowl_cx_mm)
+    bowl_cy_px = PX(bowl_cy_mm)
+
+    # Spoon's long axis direction (handle goes upper-left from bowl)
+    # 210° in math = pointing upper-left in PIL screen coords (y-flipped)
+    spoon_angle = math.radians(210)
     cos_a, sin_a = math.cos(spoon_angle), math.sin(spoon_angle)
-    half_l, half_w = spoon_length_px / 2, spoon_width_px / 2
-    corners = [(-half_l, -half_w), (half_l, -half_w), (half_l, half_w), (-half_l, half_w)]
-    rotated = [(spoon_cx_px + x * cos_a - y * sin_a,
-                spoon_cy_px + x * sin_a + y * cos_a) for x, y in corners]
-    sd.polygon(rotated, fill=255)
-    head_dist = half_l + PX(2)
-    head_cx = spoon_cx_px - head_dist * cos_a
-    head_cy = spoon_cy_px - head_dist * sin_a
-    head_r = PX(9)
-    sd.ellipse([head_cx - head_r, head_cy - head_r,
-                head_cx + head_r, head_cy + head_r], fill=255)
+
+    def to_world(lx, ly):
+        return (bowl_cx_px + lx * cos_a - ly * sin_a,
+                bowl_cy_px + lx * sin_a + ly * cos_a)
+
+    # Bowl as an oval, approximated by 36 points
+    a = PX(bowl_length_mm) / 2     # semi-major (along spoon axis)
+    b = PX(bowl_width_mm) / 2      # semi-minor (perpendicular)
+    bowl_pts = []
+    n = 36
+    for i in range(n):
+        t = 2 * math.pi * i / n
+        bowl_pts.append(to_world(a * math.cos(t), b * math.sin(t)))
+    sd.polygon(bowl_pts, fill=255)
+
+    # Handle: tapered trapezoid extending from bowl back edge toward tip
+    handle_x_start = a - PX(handle_inset_mm)
+    handle_x_end = handle_x_start + PX(handle_length_mm)
+    half_w_bowl = PX(handle_w_bowl_mm) / 2
+    half_w_tip = PX(handle_w_tip_mm) / 2
+    handle_pts = [
+        to_world(handle_x_start, -half_w_bowl),
+        to_world(handle_x_end, -half_w_tip),
+        to_world(handle_x_end, half_w_tip),
+        to_world(handle_x_start, half_w_bowl),
+    ]
+    sd.polygon(handle_pts, fill=255)
 
     # ---- Compose disjoint regions ----
     # Shadow visible only outside saucer
