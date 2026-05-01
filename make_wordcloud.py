@@ -17,8 +17,8 @@ from wordcloud import WordCloud
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-OUTPUT = ROOT / "output"
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / "output" / "wordcloud"
+OUTPUT.mkdir(parents=True, exist_ok=True)
 
 # Page setup
 PAGE_W_MM, PAGE_H_MM = 297, 420
@@ -317,7 +317,7 @@ def main() -> int:
     preview = img.copy()
     preview.thumbnail((1400, 2000), Image.Resampling.LANCZOS)
     preview.save(OUTPUT / "wordcloud_v1_preview.png")
-    print(f"→ output/wordcloud_v1_preview.png  (scaled preview)")
+    print(f"→ {OUTPUT}/wordcloud_v1_preview.png  (scaled preview)")
 
     return 0
 

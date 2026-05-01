@@ -1,8 +1,8 @@
 """Render zoomed regional A3 maps with finca callouts.
 
 For each region, produces:
-  - output/map_<region>.pdf   (print-ready, vector)
-  - output/map_<region>.png   (preview at 300 dpi)
+  - output/maps/map_<region>.pdf   (print-ready, vector)
+  - output/maps/map_<region>.png   (preview at 300 dpi)
 
 Style: Senzu-inspired — saturated single color per sheet, white paper, hairline
 country outlines, finca callouts in fine print readable up close.
@@ -18,8 +18,8 @@ from matplotlib.collections import PatchCollection
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-OUTPUT = ROOT / "output"
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / "output" / "maps"
+OUTPUT.mkdir(parents=True, exist_ok=True)
 
 NE_PATH = DATA / "ne_50m_admin_0_countries.geojson"
 

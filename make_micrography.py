@@ -5,7 +5,7 @@ From across the room: a strong silhouette. Up close: every line is your
 coffee history — countries, farms, tasting notes, blurbs.
 
 Outputs:
-  output/micrography_v1.png   (preview at chosen DPI)
+  output/micrography/micrography_v1.png   (preview at chosen DPI)
 """
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-OUTPUT = ROOT / "output"
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / "output" / "micrography"
+OUTPUT.mkdir(parents=True, exist_ok=True)
 
 # ---- Page setup: A3 portrait ----
 PAGE_W_MM, PAGE_H_MM = 297, 420
@@ -396,12 +396,12 @@ def main() -> int:
         inspection.paste(layer, mask=regions[name])
     inspection.thumbnail((1200, 1700), Image.Resampling.LANCZOS)
     inspection.save(OUTPUT / "micrography_v1_silhouette.png")
-    print(f"  → output/micrography_v1_silhouette.png  (silhouette only)")
+    print(f"  → output/micrography/micrography_v1_silhouette.png  (silhouette only)")
 
     small = final.copy()
     small.thumbnail((1400, 2000), Image.Resampling.LANCZOS)
     small.save(OUTPUT / "micrography_v1_preview.png")
-    print(f"  → output/micrography_v1_preview.png  (scaled preview)")
+    print(f"  → output/micrography/micrography_v1_preview.png  (scaled preview)")
 
     # Detail crop — middle 1/3 of the carafe at full resolution, to show
     # what the text actually looks like up close.
@@ -411,7 +411,7 @@ def main() -> int:
     detail = final.crop((cx - crop_w // 2, cy - crop_h // 2,
                          cx + crop_w // 2, cy + crop_h // 2))
     detail.save(OUTPUT / "micrography_v1_detail.png")
-    print(f"  → output/micrography_v1_detail.png  (detail crop, carafe middle)")
+    print(f"  → output/micrography/micrography_v1_detail.png  (detail crop, carafe middle)")
     return 0
 
 
