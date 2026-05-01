@@ -40,12 +40,14 @@ TITLE_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 TITLE_TEXT = "37 COFFEES"
 SUBTITLE_TEXT = "SENZU COFFEE ROASTERS · ROASTED IN PORTO"
 
-# Colors — inverted from v1: deep Senzu burgundy silhouette, cream text inside.
-# The deep wine echoes the Palermo / El Panal cards, darkened for espresso vibe.
+# Two-tone "pulling a shot" palette: dark espresso body + golden crema.
+# Both colors live in the warm Senzu palette (terracotta/coffee family).
 PAPER = (250, 248, 243)
-SILHOUETTE_FILL = (90, 26, 40)   # #5A1A28 deep wine — the saturated block
-INK_INSIDE = (250, 248, 243)     # cream/paper text inside the silhouette
-INK_OUTSIDE = (40, 22, 18)       # near-black for title/footer outside
+ESPRESSO = (38, 22, 18)          # #261612 deep coffee — almost black with warm undertone
+CREMA = (194, 136, 64)           # #C28840 warm golden tan — the foam on top of espresso
+INK_ON_DARK = (250, 245, 230)    # cream text on espresso
+INK_ON_CREMA = (38, 22, 18)      # dark text on crema/pour
+INK_OUTSIDE = (38, 22, 18)       # title/footer on paper
 
 
 def pt_to_px(pt: float) -> int:
@@ -77,203 +79,233 @@ def build_corpus(coffees: list[dict]) -> str:
 
 # ---- Silhouette: V60 dripper + carafe ----
 
-def build_silhouette(width: int, height: int) -> Image.Image:
-    """Espresso cup, side view, with saucer, handle, and steam wisps.
+def build_silhouette(width: int, height: int) -> dict:
+    """Pulling-a-shot composition: a stream of espresso pours from above
+    into a small white cup; crema (golden foam) sits on the surface; the
+    rest of the cup body is dark espresso with a handle on the right.
 
-    255 = silhouette (gets filled in the saturated color), 0 = paper.
+    Returns a dict of disjoint region masks. Each is L-mode where 255 means
+    'this pixel belongs to the region'. Regions get different fill+text
+    colors in the typesetter.
+
+    Regions, top to bottom:
+        pour      — thin vertical stream descending from top of page
+        crema     — golden foam, top portion of cup interior
+        cup_body  — dark espresso, lower portion of cup + handle
     """
-    import math
-    mask = Image.new("L", (width, height), 0)
-    d = ImageDraw.Draw(mask)
+    from PIL import ImageChops
+
     cx = width // 2
 
-    # Layout
-    top_y = PX(MARGIN_TOP_MM + 18)
-    bottom_y = height - PX(MARGIN_BOTTOM_MM + 14)
+    # Sizes (mm) — cup bigger and more central; pour shorter and thicker
+    cup_top_w = 200
+    cup_bot_w = 150
+    cup_h = 155
+    cup_wall_mm = 6
+    crema_h = 30
+    pour_w = 17
+    pour_h = 140
+    handle_outer_d = 68
+    handle_inner_d = 38
+    rim_lip_h = 7
 
-    # Sizes (mm)
-    cup_top_w = 130
-    cup_bot_w = 95
-    cup_h = 130
-    saucer_w = 215
-    saucer_h = 18
-    handle_outer_d = 64
-    handle_inner_d = 36
-    handle_offset_mm = 8           # how far handle center sits past cup edge
-
-    steam_count = 3
-    steam_amplitude_mm = 12
-    steam_height_mm = 110
-    steam_thickness_mm = 12
-    steam_top_gap_mm = 30          # gap between cup rim and start of steam
-
-    # Position cup+saucer centered vertically, leaving room above for steam
-    composition_h = PX(steam_height_mm + steam_top_gap_mm + cup_h + saucer_h)
-    available_h = bottom_y - top_y
-    block_top = top_y + (available_h - composition_h) // 2
-
-    steam_y0 = block_top
-    steam_y1 = steam_y0 + PX(steam_height_mm)
-    cup_y0 = steam_y1 + PX(steam_top_gap_mm)
+    # Vertical layout: title (top), some breathing room, pour, cup, footer
+    top_y = PX(MARGIN_TOP_MM + 38)
+    pour_y0 = top_y
+    pour_y1 = pour_y0 + PX(pour_h)
+    cup_y0 = pour_y1
     cup_y1 = cup_y0 + PX(cup_h)
-    saucer_y0 = cup_y1
-    saucer_y1 = saucer_y0 + PX(saucer_h)
 
-    # ---- Steam wisps (drawn first; cup overlaps the bottom) ----
-    # 3 wavy plumes that sway side-to-side, getting thinner and sparser at top
-    for i in range(steam_count):
-        # Each wisp slightly different x, phase, height
-        x_offset = (i - (steam_count - 1) / 2) * PX(22)
-        phase = i * 1.7
-        # Build polygon of wisp by following sinusoidal centerline
-        n_pts = 80
-        pts_left = []
-        pts_right = []
-        for j in range(n_pts):
-            t = j / (n_pts - 1)
-            y = steam_y1 - t * PX(steam_height_mm)
-            # Amplitude grows toward top (more dramatic at the tip)
-            amp = PX(steam_amplitude_mm) * (0.4 + 0.9 * t)
-            sway = amp * math.sin(t * math.pi * 1.6 + phase)
-            # Thickness tapers toward top (thinner higher up)
-            thickness = PX(steam_thickness_mm) * (1.0 - 0.85 * t)
-            cx_w = cx + x_offset + sway
-            pts_left.append((cx_w - thickness / 2, y))
-            pts_right.append((cx_w + thickness / 2, y))
-        wisp = pts_left + list(reversed(pts_right))
-        d.polygon(wisp, fill=255)
+    crema_y0 = cup_y0 + PX(rim_lip_h)
+    crema_y1 = crema_y0 + PX(crema_h)
 
-    # ---- Cup body ----
-    # Trapezoid (slightly wider at top), with a small rounded bottom.
-    cup_pts = [
-        (cx - PX(cup_top_w) // 2, cup_y0),
-        (cx + PX(cup_top_w) // 2, cup_y0),
-        (cx + PX(cup_bot_w) // 2, cup_y1),
-        (cx - PX(cup_bot_w) // 2, cup_y1),
-    ]
+    # Horizontal cup edges at any y (for taper interpolation)
+    def cup_edge_x(y_px: int, side: int) -> int:
+        """side: -1 left, +1 right. Linear interpolation top→bottom."""
+        t = (y_px - cup_y0) / max(1, (cup_y1 - cup_y0))
+        w = PX(cup_top_w) + (PX(cup_bot_w) - PX(cup_top_w)) * t
+        return int(cx + side * w / 2)
 
-    # ---- Handle on right side (drawn before cup so cup hides the inner edge) ----
-    handle_cx = cx + PX(cup_top_w) // 2 + PX(handle_offset_mm) - PX(2)
+    # Inner edges (after cup wall)
+    def cup_inner_x(y_px: int, side: int) -> int:
+        return cup_edge_x(y_px, side) - side * PX(cup_wall_mm)
+
+    # ---- POUR mask — thin vertical column above cup ----
+    pour_mask = Image.new("L", (width, height), 0)
+    pd = ImageDraw.Draw(pour_mask)
+    pd.rounded_rectangle(
+        [cx - PX(pour_w) // 2, pour_y0,
+         cx + PX(pour_w) // 2, pour_y1],
+        radius=PX(pour_w // 2), fill=255,
+    )
+
+    # ---- CUP outer silhouette — for ceramic shape (used to subtract regions) ----
+    cup_outer = Image.new("L", (width, height), 0)
+    co = ImageDraw.Draw(cup_outer)
+    # Rim lip extends slightly wider than cup top
+    co.rounded_rectangle([
+        cx - PX(cup_top_w + 6) // 2, cup_y0 - PX(rim_lip_h) // 2,
+        cx + PX(cup_top_w + 6) // 2, cup_y0 + PX(rim_lip_h) // 2,
+    ], radius=PX(3), fill=255)
+    # Trapezoid body
+    co.polygon([
+        (cup_edge_x(cup_y0, -1), cup_y0),
+        (cup_edge_x(cup_y0, +1), cup_y0),
+        (cup_edge_x(cup_y1, +1), cup_y1),
+        (cup_edge_x(cup_y1, -1), cup_y1),
+    ], fill=255)
+    # Slight rounding on the bottom corners — overlay an ellipse near the base
+    base_w = PX(cup_bot_w + 6)
+    base_h = PX(20)
+    co.ellipse([
+        cx - base_w // 2, cup_y1 - base_h // 2,
+        cx + base_w // 2, cup_y1 + base_h // 2,
+    ], fill=255)
+
+    # ---- CUP interior — what's INSIDE the ceramic (no wall) ----
+    cup_interior = Image.new("L", (width, height), 0)
+    ci = ImageDraw.Draw(cup_interior)
+    ci.polygon([
+        (cup_inner_x(crema_y0, -1), crema_y0),
+        (cup_inner_x(crema_y0, +1), crema_y0),
+        (cup_inner_x(cup_y1 - PX(8), +1), cup_y1 - PX(8)),
+        (cup_inner_x(cup_y1 - PX(8), -1), cup_y1 - PX(8)),
+    ], fill=255)
+
+    # ---- CREMA region: top band of cup interior ----
+    crema_mask = Image.new("L", (width, height), 0)
+    cm = ImageDraw.Draw(crema_mask)
+    cm.polygon([
+        (cup_inner_x(crema_y0, -1), crema_y0),
+        (cup_inner_x(crema_y0, +1), crema_y0),
+        (cup_inner_x(crema_y1, +1), crema_y1),
+        (cup_inner_x(crema_y1, -1), crema_y1),
+    ], fill=255)
+
+    # ---- ESPRESSO body region: rest of cup interior + handle ring ----
+    espresso_interior = ImageChops.subtract(cup_interior, crema_mask)
+
+    # Handle: filled annulus on right side
+    handle_mask = Image.new("L", (width, height), 0)
+    hm = ImageDraw.Draw(handle_mask)
+    handle_cx = cup_edge_x(cup_y0 + PX(cup_h * 0.45), +1) + PX(handle_outer_d) // 2 - PX(8)
     handle_cy = cup_y0 + PX(cup_h * 0.55)
-    d.ellipse([
+    hm.ellipse([
         handle_cx - PX(handle_outer_d) // 2, handle_cy - PX(handle_outer_d) // 2,
         handle_cx + PX(handle_outer_d) // 2, handle_cy + PX(handle_outer_d) // 2,
     ], fill=255)
-    d.ellipse([
+    hm.ellipse([
         handle_cx - PX(handle_inner_d) // 2, handle_cy - PX(handle_inner_d) // 2,
         handle_cx + PX(handle_inner_d) // 2, handle_cy + PX(handle_inner_d) // 2,
     ], fill=0)
+    # Subtract any portion of the handle that overlaps the cup outer (the
+    # cup's body should hide the handle there)
+    handle_visible = ImageChops.subtract(handle_mask, cup_outer)
 
-    # Cup on top covers the left portion of the handle's inner cutout
-    d.polygon(cup_pts, fill=255)
+    # Espresso region = interior body + visible handle
+    espresso_body = ImageChops.add(espresso_interior, handle_visible)
 
-    # Small cap at the very top of the cup (rim line) — adds an espresso-cup "lip"
-    rim_h = PX(7)
-    d.rounded_rectangle([
-        cx - PX(cup_top_w + 8) // 2, cup_y0 - rim_h // 2,
-        cx + PX(cup_top_w + 8) // 2, cup_y0 + rim_h // 2,
-    ], radius=PX(3), fill=255)
-
-    # ---- Saucer — wide ellipse-like band ----
-    d.rounded_rectangle([
-        cx - PX(saucer_w) // 2, saucer_y0,
-        cx + PX(saucer_w) // 2, saucer_y1,
-    ], radius=PX(saucer_h // 2), fill=255)
-
-    return mask
+    return {
+        "pour": pour_mask,
+        "crema": crema_mask,
+        "cup_body": espresso_body,
+        "cup_outer": cup_outer,  # used for outline only — no fill, no text
+    }
 
 
 # ---- Typesetter ----
 
-def typeset(mask: Image.Image, corpus: str, font: ImageFont.FreeTypeFont,
+def typeset(regions: dict, corpus: str, font: ImageFont.FreeTypeFont,
             line_height: int) -> Image.Image:
-    """Walk the mask row-by-row at line_height intervals; for each row find
-    the contiguous dark horizontal segments; fill each with characters from
-    the corpus. Returns a final RGB image rendered on PAPER.
-
-    Inverted color scheme: silhouette is filled with SILHOUETTE_FILL, text
-    inside is rendered in INK_INSIDE (cream) for a card-like high-contrast look.
+    """Multi-region typesetter. Each region in REGION_STYLES gets its own
+    fill color and text color, with text flowing from a shared corpus cursor
+    so the narrative reads top-to-bottom across regions.
     """
-    width, height = mask.size
+    width, height = regions["cup_body"].size
     out = Image.new("RGB", (width, height), PAPER)
-    # Solid fill of the silhouette with the saturated color
-    fill_layer = Image.new("RGB", (width, height), SILHOUETTE_FILL)
-    out.paste(fill_layer, mask=mask)
+
+    # Fill each region with its background color
+    for name, fill in [
+        ("cup_body", ESPRESSO),
+        ("crema", CREMA),
+        ("pour", ESPRESSO),       # the pour stream is the dark coffee itself
+    ]:
+        layer = Image.new("RGB", (width, height), fill)
+        out.paste(layer, mask=regions[name])
+
+    # Cup outer rim/wall — we let the paper show through for the white ceramic.
+    # But we still want a thin dark stroke around the cup so it reads as a
+    # discrete object on cream paper. Skip if we want a fully invisible cup.
+
     draw = ImageDraw.Draw(out)
-
-    mask_px = mask.load()
-
-    # Approximate glyph width for SF Mono at this size
     bbox = font.getbbox("M")
-    char_w = bbox[2] - bbox[0]  # width of one mono char
-    # Vertical position of text baseline within a line cell
-    # Pillow draws text from top-left; estimate baseline at roughly 0.8 * line height
+    char_w = bbox[2] - bbox[0]
     text_baseline_offset = int(line_height * 0.08)
 
-    corpus_pos = 0
-    corpus_len = len(corpus)
+    cursor = 0
 
-    # Center-of-line y coordinates we'll sample for "is this row inside the shape"
-    y = 0
-    while y + line_height <= height:
-        # Sample at the visual middle of the line
-        sample_y = y + line_height // 2
+    def fill_region(mask_img, text_color):
+        nonlocal cursor
+        mask_px = mask_img.load()
+        y = 0
+        while y + line_height <= height:
+            sample_y = y + line_height // 2
+            in_seg = False
+            segments = []
+            seg_start = 0
+            for x in range(width):
+                on = mask_px[x, sample_y] > 127
+                if on and not in_seg:
+                    seg_start = x
+                    in_seg = True
+                elif not on and in_seg:
+                    segments.append((seg_start, x))
+                    in_seg = False
+            if in_seg:
+                segments.append((seg_start, width))
 
-        # Find dark segments along this row
-        in_segment = False
-        segments = []
-        seg_start = 0
-        for x in range(width):
-            on = mask_px[x, sample_y] > 127
-            if on and not in_segment:
-                seg_start = x
-                in_segment = True
-            elif not on and in_segment:
-                segments.append((seg_start, x))
-                in_segment = False
-        if in_segment:
-            segments.append((seg_start, width))
+            for x0, x1 in segments:
+                seg_w = x1 - x0
+                n_chars = max(1, seg_w // char_w)
+                # Fetch n_chars from corpus, wrapping if we run out
+                pieces = []
+                remaining = n_chars
+                while remaining > 0:
+                    avail = len(corpus) - cursor
+                    take = min(avail, remaining)
+                    pieces.append(corpus[cursor:cursor + take])
+                    cursor = (cursor + take) % len(corpus)
+                    remaining -= take
+                text = "".join(pieces)
+                draw.text((x0, y + text_baseline_offset), text,
+                          font=font, fill=text_color)
+            y += line_height
 
-        # Fill each segment with characters
-        for x0, x1 in segments:
-            seg_w = x1 - x0
-            n_chars = max(1, seg_w // char_w)
-            text = corpus[corpus_pos: corpus_pos + n_chars]
-            # If we run out of corpus, wrap around (rare for now)
-            if len(text) < n_chars:
-                wrap = corpus[: n_chars - len(text)]
-                text += wrap
-                corpus_pos = len(wrap)
-            else:
-                corpus_pos = (corpus_pos + n_chars) % corpus_len
-            # Draw text inside segment in cream — reads as engraved/embossed
-            draw.text((x0, y + text_baseline_offset), text,
-                      font=font, fill=INK_INSIDE)
-
-        y += line_height
+    # Order: pour (top) → crema → cup_body. Reads top-to-bottom.
+    fill_region(regions["pour"], INK_ON_DARK)
+    fill_region(regions["crema"], INK_ON_CREMA)
+    fill_region(regions["cup_body"], INK_ON_DARK)
 
     return out
 
 
 def draw_overlays(img: Image.Image) -> Image.Image:
-    """Draw title above and footer below the silhouette."""
+    """Title at top, footer at bottom on cream paper."""
     width, height = img.size
     draw = ImageDraw.Draw(img)
     title_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(28))
     sub_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(9))
 
-    # Title in the deep silhouette color, near the top
     title_y = PX(MARGIN_TOP_MM // 2)
     tw = draw.textlength(TITLE_TEXT, font=title_font)
     draw.text(((width - tw) / 2, title_y), TITLE_TEXT,
-              fill=SILHOUETTE_FILL, font=title_font)
+              fill=ESPRESSO, font=title_font)
 
     sub_y = title_y + pt_to_px(32)
     sw = draw.textlength(SUBTITLE_TEXT, font=sub_font)
     draw.text(((width - sw) / 2, sub_y), SUBTITLE_TEXT,
               fill=INK_OUTSIDE, font=sub_font)
 
-    # Footer
     footer_text = "37 SINGLE-ORIGIN COFFEES   ·   ROASTED IN PORTO"
     foot_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(8))
     fw = draw.textlength(footer_text, font=foot_font)
@@ -289,12 +321,12 @@ def main() -> int:
     corpus = build_corpus(coffees)
     print(f"Corpus: {len(corpus):,} characters from {len(coffees)} coffees.")
 
-    mask = build_silhouette(PAGE_W_PX, PAGE_H_PX)
+    regions = build_silhouette(PAGE_W_PX, PAGE_H_PX)
 
     font = ImageFont.truetype(FONT_PATH, pt_to_px(FONT_SIZE_PT))
     line_height = int(pt_to_px(FONT_SIZE_PT) * LINE_HEIGHT_FACTOR)
 
-    typeset_img = typeset(mask, corpus, font, line_height)
+    typeset_img = typeset(regions, corpus, font, line_height)
     final = draw_overlays(typeset_img)
 
     out_png = OUTPUT / "micrography_v1.png"
@@ -302,10 +334,14 @@ def main() -> int:
     print(f"  → {out_png}  ({final.size[0]}×{final.size[1]} px @ {DPI} dpi)")
     print(f"  print size: {PAGE_W_MM}×{PAGE_H_MM} mm (A3 portrait)")
 
-    # Inspection helpers
-    silhouette_preview = mask.convert("RGB")
-    silhouette_preview.thumbnail((1200, 1700), Image.Resampling.LANCZOS)
-    silhouette_preview.save(OUTPUT / "micrography_v1_silhouette.png")
+    # Composite of all regions for inspection
+    inspection = Image.new("RGB", regions["cup_body"].size, PAPER)
+    for name, fill in [("cup_body", ESPRESSO), ("crema", CREMA),
+                       ("pour", ESPRESSO)]:
+        layer = Image.new("RGB", regions["cup_body"].size, fill)
+        inspection.paste(layer, mask=regions[name])
+    inspection.thumbnail((1200, 1700), Image.Resampling.LANCZOS)
+    inspection.save(OUTPUT / "micrography_v1_silhouette.png")
     print(f"  → output/micrography_v1_silhouette.png  (silhouette only)")
 
     small = final.copy()
