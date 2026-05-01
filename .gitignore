@@ -17,3 +17,6 @@ output/
 # Python
 __pycache__/
 *.pyc
+
+# Geocoding HTTP cache (regeneratable; not worth committing)
+data/.geocode_cache.json

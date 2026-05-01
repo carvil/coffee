@@ -6,7 +6,13 @@
     "farm": "Thuti Washing Station",
     "producer": "James Nderitu Gathua",
     "variety": "Ruiru 11, SL 28, and SL 34",
-    "tasting_notes": ["Cereals", "Dark chocolate", "Biscuit", "Citric", "Floral"],
+    "tasting_notes": [
+      "Cereals",
+      "Dark chocolate",
+      "Biscuit",
+      "Citric",
+      "Floral"
+    ],
     "altitude_min_m": 1700,
     "altitude_max_m": 1850,
     "process": "Washed Fermented",
@@ -14,7 +20,13 @@
     "card_color_hex": "#B5734F",
     "stamp_motif": "cookie with chocolate chips",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": -0.3212105,
+    "lon": 36.9295615,
+    "geocode_precision": "town",
+    "geocode_query": "Nyeri, Kenya",
+    "geocode_display_name": "Nyeri, Kenya",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0731.jpg",
@@ -23,7 +35,13 @@
     "farm": "Finca Santa Rita",
     "producer": "Rita Graciela Cohen",
     "variety": "Caturra",
-    "tasting_notes": ["Cocoa", "Strawberry", "Blackcurrant", "Blood orange", "Green tea"],
+    "tasting_notes": [
+      "Cocoa",
+      "Strawberry",
+      "Blackcurrant",
+      "Blood orange",
+      "Green tea"
+    ],
     "altitude_min_m": 1675,
     "altitude_max_m": 1734,
     "process": "Natural",
@@ -31,7 +49,13 @@
     "card_color_hex": "#9C1B27",
     "stamp_motif": "two cherries on stems",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 14.4621012,
+    "lon": -90.4388234,
+    "geocode_precision": "town",
+    "geocode_query": "Fraijanes, Guatemala",
+    "geocode_display_name": "Fraijanes, Departamento de Guatemala, Guatemala",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0732.jpg",
@@ -40,7 +64,13 @@
     "farm": "Finca Monte Alto",
     "producer": "Gerardo Arias",
     "variety": "Red Catuai",
-    "tasting_notes": ["Light caramel", "Dark chocolate", "Red plum", "Panela", "Grapefruit"],
+    "tasting_notes": [
+      "Light caramel",
+      "Dark chocolate",
+      "Red plum",
+      "Panela",
+      "Grapefruit"
+    ],
     "altitude_min_m": 1500,
     "altitude_max_m": 1800,
     "process": "Natural",
@@ -48,7 +78,13 @@
     "card_color_hex": "#5F3B1F",
     "stamp_motif": "puzzle pieces",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 9.5828031,
+    "lon": -84.0659187,
+    "geocode_precision": "town",
+    "geocode_query": "Tarrazú, Costa Rica",
+    "geocode_display_name": "Tarrazú, San José, Costa Rica",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0733.jpg",
@@ -57,7 +93,15 @@
     "farm": "Palermo",
     "producer": "Família Cerquera",
     "variety": "Castillo",
-    "tasting_notes": ["Brown sugar", "Licorice", "Winey", "Dark chocolate", "Prune", "Blackberry", "Citrus fruit"],
+    "tasting_notes": [
+      "Brown sugar",
+      "Licorice",
+      "Winey",
+      "Dark chocolate",
+      "Prune",
+      "Blackberry",
+      "Citrus fruit"
+    ],
     "altitude_min_m": 1600,
     "altitude_max_m": 1800,
     "process": "Natural",
@@ -65,7 +109,13 @@
     "card_color_hex": "#671A2D",
     "stamp_motif": "wrapped candy with grid pattern",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 2.8896962,
+    "lon": -75.4346589,
+    "geocode_precision": "farm",
+    "geocode_query": "Palermo, Huila, Colombia",
+    "geocode_display_name": "Palermo, Norte, Huila, RAP (Especial) Central, Colombia",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0736.jpg",
@@ -74,7 +124,14 @@
     "farm": "Bombe Washing Station",
     "producer": "Dukale Wakayo Dakola",
     "variety": "Heirloom",
-    "tasting_notes": ["Honey", "Milky", "Milk chocolate", "Lemon", "Apricot", "Tangerine"],
+    "tasting_notes": [
+      "Honey",
+      "Milky",
+      "Milk chocolate",
+      "Lemon",
+      "Apricot",
+      "Tangerine"
+    ],
     "altitude_min_m": 1950,
     "altitude_max_m": 1950,
     "process": "Washed",
@@ -82,7 +139,13 @@
     "card_color_hex": "#C84A2D",
     "stamp_motif": "abstract organic blob cluster",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.5598773,
+    "lon": 38.8764863,
+    "geocode_precision": "farm",
+    "geocode_query": "Bombe Washing Station, Sidama, Ethiopia",
+    "geocode_display_name": "Bombe Washing Station, ሲዳማ ክልል Sidama سيداما, ኢትዮጵያ",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0737.jpg",
@@ -91,7 +154,14 @@
     "farm": "Bombe Washing Station",
     "producer": "Bensa village",
     "variety": "Heirloom",
-    "tasting_notes": ["Maple syrup", "Rum", "Cocoa", "Blackberry", "Cherry", "Pineapple"],
+    "tasting_notes": [
+      "Maple syrup",
+      "Rum",
+      "Cocoa",
+      "Blackberry",
+      "Cherry",
+      "Pineapple"
+    ],
     "altitude_min_m": 2300,
     "altitude_max_m": 2400,
     "process": "Anaerobic Natural",
@@ -99,7 +169,13 @@
     "card_color_hex": "#B72463",
     "stamp_motif": "flower bloom with leaf petals",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.5598773,
+    "lon": 38.8764863,
+    "geocode_precision": "farm",
+    "geocode_query": "Bombe Washing Station, Sidama, Ethiopia",
+    "geocode_display_name": "Bombe Washing Station, ሲዳማ ክልል Sidama سيداما, ኢትዮጵያ",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0738.jpg",
@@ -108,7 +184,14 @@
     "farm": "Vega",
     "producer": "Andrés Salaverría",
     "variety": "Bourbon",
-    "tasting_notes": ["Dark brown caramel", "Malt", "Blackberry", "Pear", "Pineapple", "Dark Rose"],
+    "tasting_notes": [
+      "Dark brown caramel",
+      "Malt",
+      "Blackberry",
+      "Pear",
+      "Pineapple",
+      "Dark Rose"
+    ],
     "altitude_min_m": 1600,
     "altitude_max_m": 1600,
     "process": "Honey",
@@ -116,7 +199,13 @@
     "card_color_hex": "#C7202E",
     "stamp_motif": "three fan/leaf shapes",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 13.8432299,
+    "lon": -89.7464716,
+    "geocode_precision": "town",
+    "geocode_query": "Juayúa, El Salvador",
+    "geocode_display_name": "Juayúa, Sonsonate Norte, Sonsonate, 2307, El Salvador",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0739.jpg",
@@ -125,7 +214,12 @@
     "farm": "Tojtik",
     "producer": "Asproguate",
     "variety": "Caturra, Catuaí",
-    "tasting_notes": ["Spices", "Caramel", "Dried fruits", "Milk chocolate"],
+    "tasting_notes": [
+      "Spices",
+      "Caramel",
+      "Dried fruits",
+      "Milk chocolate"
+    ],
     "altitude_min_m": 1700,
     "altitude_max_m": 1900,
     "process": "Washed",
@@ -133,7 +227,13 @@
     "card_color_hex": "#8C5E37",
     "stamp_motif": "amorphous blob with scattered coffee beans",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 14.5006848,
+    "lon": -90.8757094,
+    "geocode_precision": "town",
+    "geocode_query": "Acatenango, Guatemala",
+    "geocode_display_name": "Acatenango, Chimaltenango, 04001, Guatemala",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0740.jpg",
@@ -142,7 +242,12 @@
     "farm": "Shantawane Washing Station",
     "producer": null,
     "variety": "Heirloom 74-165",
-    "tasting_notes": ["Floral", "Lime", "Peach", "Pineapple"],
+    "tasting_notes": [
+      "Floral",
+      "Lime",
+      "Peach",
+      "Pineapple"
+    ],
     "altitude_min_m": 1950,
     "altitude_max_m": 1950,
     "process": "Washed",
@@ -150,7 +255,13 @@
     "card_color_hex": "#7C2E5E",
     "stamp_motif": "six-petal flower with star",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.45,
+    "lon": 38.27,
+    "geocode_precision": "town",
+    "geocode_query": "Bensa woreda centroid (Sidama Region). Shantawane WS sits in Bensa.",
+    "geocode_display_name": "Bensa, Sidama, Ethiopia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0741.jpg",
@@ -159,7 +270,13 @@
     "farm": "Bukonzo",
     "producer": "Agri Evolve",
     "variety": "SL14, SL28",
-    "tasting_notes": ["Cherry", "Syrup", "Chocolate", "Brown sugar", "Stone fruit"],
+    "tasting_notes": [
+      "Cherry",
+      "Syrup",
+      "Chocolate",
+      "Brown sugar",
+      "Stone fruit"
+    ],
     "altitude_min_m": 1400,
     "altitude_max_m": 2000,
     "process": "Natural",
@@ -167,7 +284,13 @@
     "card_color_hex": "#C75A2A",
     "stamp_motif": "horseshoe / C-shape with worm doodles",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 0.4206325,
+    "lon": 29.936915,
+    "geocode_precision": "town",
+    "geocode_query": "Rwenzori Mountains, Uganda",
+    "geocode_display_name": "Rwenzori Mountains, Kasese, Western Region, Uganda",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0742.jpg",
@@ -176,7 +299,13 @@
     "farm": "El Vergel",
     "producer": "Urrao",
     "variety": "Chiroso",
-    "tasting_notes": ["Chocolate", "Caramel", "Sugar cane", "Lime", "Tropical fruit"],
+    "tasting_notes": [
+      "Chocolate",
+      "Caramel",
+      "Sugar cane",
+      "Lime",
+      "Tropical fruit"
+    ],
     "altitude_min_m": 1880,
     "altitude_max_m": 1880,
     "process": "Washed",
@@ -184,7 +313,13 @@
     "card_color_hex": "#A89A2C",
     "stamp_motif": "palm/fan shape with squiggles",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.3142,
+    "lon": -76.1311,
+    "geocode_precision": "town",
+    "geocode_query": "Urrao town, Antioquia. Card lists 'URRAO, ANTIOQUIA'; Nominatim matched a different 'El Vergel' vereda in error.",
+    "geocode_display_name": "Urrao, Antioquia, Colombia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0743.jpg",
@@ -193,7 +328,12 @@
     "farm": "Kuria",
     "producer": null,
     "variety": "Ruiru 11, Batian, SL28, SL34",
-    "tasting_notes": ["Lime", "Honey", "Nougat", "Pineapple"],
+    "tasting_notes": [
+      "Lime",
+      "Honey",
+      "Nougat",
+      "Pineapple"
+    ],
     "altitude_min_m": 1400,
     "altitude_max_m": 1600,
     "process": "Anaerobic Natural",
@@ -201,7 +341,13 @@
     "card_color_hex": "#90952A",
     "stamp_motif": "amorphous blob shape with squiggles",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": -1.2783406,
+    "lon": 34.6181256,
+    "geocode_precision": "farm",
+    "geocode_query": "Kuria, Migori County, Kenya",
+    "geocode_display_name": "Kuria East, Migori, 40417, Kenya",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0744.jpg",
@@ -210,7 +356,13 @@
     "farm": "Villa Galicia",
     "producer": "Mauricio Salaverría",
     "variety": "Bourbon Marsellesa",
-    "tasting_notes": ["Passion fruit", "Pineapple", "Lemon", "Caramel", "Dark chocolate"],
+    "tasting_notes": [
+      "Passion fruit",
+      "Pineapple",
+      "Lemon",
+      "Caramel",
+      "Dark chocolate"
+    ],
     "altitude_min_m": 1550,
     "altitude_max_m": 1550,
     "process": "Natural",
@@ -218,7 +370,13 @@
     "card_color_hex": "#D58A2F",
     "stamp_motif": "zigzag/maze ribbon with sun ray sketches",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 13.8703698,
+    "lon": -89.850898,
+    "geocode_precision": "town",
+    "geocode_query": "Ataco, El Salvador",
+    "geocode_display_name": "Concepción de Ataco, Ahuachapán Centro, Ahuachapán, 2106, El Salvador",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0745.jpg",
@@ -227,7 +385,12 @@
     "farm": "Mengeche Derso",
     "producer": "Mr. Mengesha Derso",
     "variety": "Heirloom",
-    "tasting_notes": ["Jam", "Hibiscus", "Jasmine", "Winey acidity"],
+    "tasting_notes": [
+      "Jam",
+      "Hibiscus",
+      "Jasmine",
+      "Winey acidity"
+    ],
     "altitude_min_m": 2300,
     "altitude_max_m": 2300,
     "process": "Natural",
@@ -235,7 +398,13 @@
     "card_color_hex": "#4F7A2C",
     "stamp_motif": "eight-pointed flower bloom",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.162,
+    "lon": 38.2056,
+    "geocode_precision": "town",
+    "geocode_query": "Yirgacheffe town, Gedeo Zone, Ethiopia.",
+    "geocode_display_name": "Yirgacheffe, Gedeo Zone, Ethiopia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0746.jpg",
@@ -244,7 +413,12 @@
     "farm": "Chania Estate",
     "producer": "Boyce Harries",
     "variety": "SL34, Ruiru 11, Batian, K7",
-    "tasting_notes": ["Spices", "Lemon", "Tomato", "Milk chocolate"],
+    "tasting_notes": [
+      "Spices",
+      "Lemon",
+      "Tomato",
+      "Milk chocolate"
+    ],
     "altitude_min_m": 1525,
     "altitude_max_m": 1525,
     "process": "Washed",
@@ -252,7 +426,13 @@
     "card_color_hex": "#C72030",
     "stamp_motif": "fan of leaves with signature scribble",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": -1.036648,
+    "lon": 37.077523,
+    "geocode_precision": "town",
+    "geocode_query": "Thika, Kenya",
+    "geocode_display_name": "Thika, Thika Town, Kiambu, Kenya",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0747.jpg",
@@ -261,7 +441,15 @@
     "farm": "Goğoğu",
     "producer": null,
     "variety": "Heirloom 74110, 74112",
-    "tasting_notes": ["Wine", "Prune", "Apricot", "Milk chocolate", "Yogurt", "Black tea", "Berries"],
+    "tasting_notes": [
+      "Wine",
+      "Prune",
+      "Apricot",
+      "Milk chocolate",
+      "Yogurt",
+      "Black tea",
+      "Berries"
+    ],
     "altitude_min_m": 2000,
     "altitude_max_m": 2000,
     "process": "Natural",
@@ -269,7 +457,13 @@
     "card_color_hex": "#5C2A2A",
     "stamp_motif": "infinity loop / cherry pair with leaves",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.13,
+    "lon": 38.48,
+    "geocode_precision": "town",
+    "geocode_query": "Uraga, Guji Zone, Oromia, Ethiopia.",
+    "geocode_display_name": "Uraga, Guji, Oromia, Ethiopia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0748.jpg",
@@ -278,7 +472,12 @@
     "farm": "Finca La Esperanza",
     "producer": "Luis Hernando Morales",
     "variety": "Pink Bourbon",
-    "tasting_notes": ["Green apple", "Floral", "Chocolate", "Plum"],
+    "tasting_notes": [
+      "Green apple",
+      "Floral",
+      "Chocolate",
+      "Plum"
+    ],
     "altitude_min_m": 1780,
     "altitude_max_m": 1780,
     "process": "Washed",
@@ -286,7 +485,13 @@
     "card_color_hex": "#94A035",
     "stamp_motif": "petal/leaf cluster with line drawing",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 1.0254057,
+    "lon": -76.5384818,
+    "geocode_precision": "town",
+    "geocode_query": "Puerto Limón, Colombia",
+    "geocode_display_name": "Puerto Limón, Mocoa, Putumayo, RAP Amazonía, Colombia",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0749.jpg",
@@ -295,7 +500,14 @@
     "farm": "El Panal",
     "producer": "La Libertad cooperative",
     "variety": "Bourbon, Caturra, Catuai",
-    "tasting_notes": ["Malt", "Raisin", "Raspberry", "Cacao", "Soda-sparkling", "Candy"],
+    "tasting_notes": [
+      "Malt",
+      "Raisin",
+      "Raspberry",
+      "Cacao",
+      "Soda-sparkling",
+      "Candy"
+    ],
     "altitude_min_m": 1600,
     "altitude_max_m": 1800,
     "process": "Natural",
@@ -303,7 +515,13 @@
     "card_color_hex": "#9D8F36",
     "stamp_motif": "leaf petals with bean dots (honeycomb-style)",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 15.606418,
+    "lon": -91.6442217,
+    "geocode_precision": "town",
+    "geocode_query": "Huehuetenango, Guatemala",
+    "geocode_display_name": "Huehuetenango, Guatemala",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0750.jpg",
@@ -312,7 +530,12 @@
     "farm": "Finca El Jardín",
     "producer": "Mario Mejía",
     "variety": "Bourbon, Catuai, IHCAFE90, Lempira",
-    "tasting_notes": ["Blueberry", "Clove", "Cinnamon", "Caramel"],
+    "tasting_notes": [
+      "Blueberry",
+      "Clove",
+      "Cinnamon",
+      "Caramel"
+    ],
     "altitude_min_m": 1100,
     "altitude_max_m": 1700,
     "process": "Natural",
@@ -320,7 +543,13 @@
     "card_color_hex": "#CD5A2A",
     "stamp_motif": "amorphous cloud / blob with thin line trails",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 14.1272072,
+    "lon": -87.9617012,
+    "geocode_precision": "town",
+    "geocode_query": "La Paz, Honduras",
+    "geocode_display_name": "La Paz, Honduras",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0751.jpg",
@@ -329,7 +558,12 @@
     "farm": "Finca Noruega",
     "producer": "Los Naranjos Coffee",
     "variety": "Caturra",
-    "tasting_notes": ["Red wine", "Cocoa", "Tartaric acidity", "Caramel"],
+    "tasting_notes": [
+      "Red wine",
+      "Cocoa",
+      "Tartaric acidity",
+      "Caramel"
+    ],
     "altitude_min_m": 1380,
     "altitude_max_m": 1380,
     "process": "Natural",
@@ -337,7 +571,13 @@
     "card_color_hex": "#D77F3D",
     "stamp_motif": "wine glass with sun-ray spikes",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 13.8588544,
+    "lon": -89.8039792,
+    "geocode_precision": "town",
+    "geocode_query": "Apaneca, El Salvador",
+    "geocode_display_name": "Apaneca, Ahuachapán Centro, Ahuachapán, El Salvador",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0752.jpg",
@@ -346,7 +586,12 @@
     "farm": "Baru Black Mountain",
     "producer": "Pedro Escribano",
     "variety": "Caturra, Catuai",
-    "tasting_notes": ["Lime", "Hazelnut", "Milk chocolate", "Macadamia"],
+    "tasting_notes": [
+      "Lime",
+      "Hazelnut",
+      "Milk chocolate",
+      "Macadamia"
+    ],
     "altitude_min_m": 1600,
     "altitude_max_m": 1700,
     "process": "Washed",
@@ -354,7 +599,13 @@
     "card_color_hex": "#3F8B8C",
     "stamp_motif": "elongated bean shapes scattered with squiggles",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 8.0549566,
+    "lon": -82.2714778,
+    "geocode_precision": "town",
+    "geocode_query": "Chiriqui, Panama",
+    "geocode_display_name": "Chiriquí, Panamá",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0753.jpg",
@@ -363,7 +614,12 @@
     "farm": "Asman Gayo",
     "producer": "Asman Arianto",
     "variety": "Ateng, Bor Bor, Catimor",
-    "tasting_notes": ["Chocolate", "Cooked cherry", "Winey", "Clove"],
+    "tasting_notes": [
+      "Chocolate",
+      "Cooked cherry",
+      "Winey",
+      "Clove"
+    ],
     "altitude_min_m": 1300,
     "altitude_max_m": 1650,
     "process": "Natural",
@@ -371,7 +627,13 @@
     "card_color_hex": "#9F3327",
     "stamp_motif": "scattered clove/clover icons with leaf doodles",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 4.6167,
+    "lon": 96.7833,
+    "geocode_precision": "town",
+    "geocode_query": "Pegasing District, Central Aceh Regency, Aceh — heart of Gayo coffee region near Takengon.",
+    "geocode_display_name": "Pegasing, Aceh, Indonesia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0754.jpg",
@@ -380,7 +642,12 @@
     "farm": "Fazenda Rio Brilhante",
     "producer": "Urban Family",
     "variety": "Aramosa",
-    "tasting_notes": ["Milk chocolate", "Raisins", "Apple", "Vanilla"],
+    "tasting_notes": [
+      "Milk chocolate",
+      "Raisins",
+      "Apple",
+      "Vanilla"
+    ],
     "altitude_min_m": 1000,
     "altitude_max_m": 1150,
     "process": "Natural",
@@ -388,7 +655,13 @@
     "card_color_hex": "#A5573D",
     "stamp_motif": "pinwheel / asterisk star with arc and dot doodles",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": -18.5264844,
+    "lon": -44.1588654,
+    "geocode_precision": "town",
+    "geocode_query": "Minas Gerais, Brazil",
+    "geocode_display_name": "Minas Gerais, Região Sudeste, Brasil",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0755.jpg",
@@ -397,7 +670,12 @@
     "farm": "Gakundu Coffee Factory",
     "producer": null,
     "variety": "Batian, SL28, SL34, Ruiru 11",
-    "tasting_notes": ["Toffee", "Blackberry", "Raspberry", "Syrup"],
+    "tasting_notes": [
+      "Toffee",
+      "Blackberry",
+      "Raspberry",
+      "Syrup"
+    ],
     "altitude_min_m": 1650,
     "altitude_max_m": 1650,
     "process": "Washed",
@@ -405,7 +683,13 @@
     "card_color_hex": "#C82130",
     "stamp_motif": "flower of overlapping petals with bean ovals",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": -0.531,
+    "lon": 37.4502,
+    "geocode_precision": "town",
+    "geocode_query": "Embu town, Embu County, Kenya. Gakundu Coffee Factory sits in this county.",
+    "geocode_display_name": "Embu, Embu County, Kenya",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0756.jpg",
@@ -414,7 +698,13 @@
     "farm": "Duwancho Washing Station",
     "producer": "Smallholder farmers",
     "variety": "Heirloom",
-    "tasting_notes": ["Caramel", "Stone fruit", "Cherry", "Candy", "Juicy acidity"],
+    "tasting_notes": [
+      "Caramel",
+      "Stone fruit",
+      "Cherry",
+      "Candy",
+      "Juicy acidity"
+    ],
     "altitude_min_m": 1900,
     "altitude_max_m": 2150,
     "process": "Natural",
@@ -422,7 +712,13 @@
     "card_color_hex": "#A02E5B",
     "stamp_motif": "amorphous splatter shape with line trails",
     "language": "en",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 6.6507504,
+    "lon": 38.4796794,
+    "geocode_precision": "town",
+    "geocode_query": "Sidama, Ethiopia",
+    "geocode_display_name": "ሲዳማ ክልል Sidama سيداما, ኢትዮጵያ",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0757.jpg",
@@ -431,7 +727,13 @@
     "farm": "Finca Satus",
     "producer": "Javier Satus",
     "variety": "Bourbon Aji",
-    "tasting_notes": ["Lime", "Milk chocolate", "Floral", "Apple", "Spicy"],
+    "tasting_notes": [
+      "Lime",
+      "Milk chocolate",
+      "Floral",
+      "Apple",
+      "Spicy"
+    ],
     "altitude_min_m": 1800,
     "altitude_max_m": 1800,
     "process": "Washed",
@@ -439,7 +741,13 @@
     "card_color_hex": "#5C3823",
     "stamp_motif": "butterfly / leaf-wing pair",
     "language": "pt",
-    "card_design": "stamp"
+    "card_design": "stamp",
+    "lat": 1.859,
+    "lon": -76.042,
+    "geocode_precision": "town",
+    "geocode_query": "Pitalito municipality, Huila — Bruselas is a vereda within Pitalito, the main coffee town.",
+    "geocode_display_name": "Pitalito (Bruselas vereda), Huila, Colombia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0758.jpg",
@@ -448,7 +756,12 @@
     "farm": "El Panal",
     "producer": "Small Producers",
     "variety": "Bourbon, Caturra, Catuai",
-    "tasting_notes": ["Strawberry", "Pineapple", "Hazelnut", "Fig"],
+    "tasting_notes": [
+      "Strawberry",
+      "Pineapple",
+      "Hazelnut",
+      "Fig"
+    ],
     "altitude_min_m": 1600,
     "altitude_max_m": 1800,
     "process": "Natural",
@@ -456,7 +769,13 @@
     "card_color_hex": "#82213A",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 15.51386,
+    "lon": -91.869447,
+    "geocode_precision": "town",
+    "geocode_query": "La Libertad, Guatemala",
+    "geocode_display_name": "La Libertad, Huehuetenango, Guatemala",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0759.jpg",
@@ -465,7 +784,12 @@
     "farm": "Finca Buenos Aires",
     "producer": "Melchor Leon Raymundo",
     "variety": "Caturra, Bourbon, Catuai",
-    "tasting_notes": ["Milk chocolate", "Almond", "Plum", "Raisin"],
+    "tasting_notes": [
+      "Milk chocolate",
+      "Almond",
+      "Plum",
+      "Raisin"
+    ],
     "altitude_min_m": 1850,
     "altitude_max_m": 1850,
     "process": "Washed",
@@ -473,7 +797,13 @@
     "card_color_hex": "#A9963F",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 15.404,
+    "lon": -91.945,
+    "geocode_precision": "town",
+    "geocode_query": "Cuilco municipality, Huehuetenango. Card says 'Cuilco Oaxaqueño'.",
+    "geocode_display_name": "Cuilco, Huehuetenango, Guatemala",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0760.jpg",
@@ -482,7 +812,12 @@
     "farm": "Finca El Renacer",
     "producer": "Felipe Restrepo",
     "variety": "Pink Bourbon",
-    "tasting_notes": ["Grapefruit", "Pomegranate", "Vanilla", "Brown sugar"],
+    "tasting_notes": [
+      "Grapefruit",
+      "Pomegranate",
+      "Vanilla",
+      "Brown sugar"
+    ],
     "altitude_min_m": 1750,
     "altitude_max_m": 1750,
     "process": "Washed",
@@ -490,7 +825,13 @@
     "card_color_hex": "#84421F",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 5.3302514,
+    "lon": -75.2873471,
+    "geocode_precision": "town",
+    "geocode_query": "Caldas, Colombia",
+    "geocode_display_name": "Caldas, RAP del Agua y la Montaña, Colombia",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0761.jpg",
@@ -499,7 +840,12 @@
     "farm": "Finca La Pachuca",
     "producer": "Roberto Mata",
     "variety": "Caturra",
-    "tasting_notes": ["Boozy", "Milk chocolate", "Red grape", "Mature plum"],
+    "tasting_notes": [
+      "Boozy",
+      "Milk chocolate",
+      "Red grape",
+      "Mature plum"
+    ],
     "altitude_min_m": 1700,
     "altitude_max_m": 1700,
     "process": "Natural",
@@ -507,7 +853,13 @@
     "card_color_hex": "#9F6B7D",
     "stamp_motif": null,
     "language": "en",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 9.7306087,
+    "lon": -83.9622317,
+    "geocode_precision": "town",
+    "geocode_query": "Tarrazú, Dota, Costa Rica",
+    "geocode_display_name": "Cabeceras de Tarrazú, Jardín, Dota, San José, 11702, Costa Rica",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0762.jpg",
@@ -516,7 +868,12 @@
     "farm": "Finca La Esmeralda",
     "producer": "Johan Gutierrez",
     "variety": "Caturra",
-    "tasting_notes": ["Blueberry", "Apple", "Vanilla", "Milk chocolate"],
+    "tasting_notes": [
+      "Blueberry",
+      "Apple",
+      "Vanilla",
+      "Milk chocolate"
+    ],
     "altitude_min_m": 1800,
     "altitude_max_m": 1800,
     "process": "Washed",
@@ -524,7 +881,13 @@
     "card_color_hex": "#B3C25F",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 3.7395424,
+    "lon": -75.9032251,
+    "geocode_precision": "town",
+    "geocode_query": "Tolima, Rioblanco, Colombia",
+    "geocode_display_name": "Tolima, Rioblanco, Sur, Tolima, RAP (Especial) Central, Colombia",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0763.jpg",
@@ -533,7 +896,13 @@
     "farm": "Finca Colima",
     "producer": "Alejo Castro Kahle",
     "variety": "Caturra",
-    "tasting_notes": ["Grape", "Plum", "Brown sugar", "Molasses", "Cinnamon"],
+    "tasting_notes": [
+      "Grape",
+      "Plum",
+      "Brown sugar",
+      "Molasses",
+      "Cinnamon"
+    ],
     "altitude_min_m": 1400,
     "altitude_max_m": 1500,
     "process": "Anaerobic Natural",
@@ -541,7 +910,13 @@
     "card_color_hex": "#7A8A2F",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 10.3767813,
+    "lon": -84.0139721,
+    "geocode_precision": "town",
+    "geocode_query": "Heredia, Costa Rica",
+    "geocode_display_name": "Heredia, Costa Rica",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0764.jpg",
@@ -550,7 +925,13 @@
     "farm": "Refisa Washing Station",
     "producer": null,
     "variety": "Heirloom",
-    "tasting_notes": ["Pineapple", "Peach", "Orange", "Caramel", "Coconut"],
+    "tasting_notes": [
+      "Pineapple",
+      "Peach",
+      "Orange",
+      "Caramel",
+      "Coconut"
+    ],
     "altitude_min_m": 2150,
     "altitude_max_m": 2150,
     "process": "Washed",
@@ -558,7 +939,13 @@
     "card_color_hex": "#B83825",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 6.7167,
+    "lon": 38.8167,
+    "geocode_precision": "town",
+    "geocode_query": "Nensebo woreda, West Arsi Zone, Oromia.",
+    "geocode_display_name": "Nensebo, West Arsi, Ethiopia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0765.jpg",
@@ -567,7 +954,12 @@
     "farm": "San Carlos Dos",
     "producer": null,
     "variety": "Yellow Icatu",
-    "tasting_notes": ["Blood orange", "Sparkling lemonade", "Cherry", "Creamy dark chocolate"],
+    "tasting_notes": [
+      "Blood orange",
+      "Sparkling lemonade",
+      "Cherry",
+      "Creamy dark chocolate"
+    ],
     "altitude_min_m": 1100,
     "altitude_max_m": 1665,
     "process": "Anaerobic Natural",
@@ -575,7 +967,13 @@
     "card_color_hex": "#B82336",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 13.7719,
+    "lon": -88.1067,
+    "geocode_precision": "region",
+    "geocode_query": "Morazán department centroid, El Salvador. La Montañita is a small hamlet.",
+    "geocode_display_name": "Morazán, El Salvador",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0766.jpg",
@@ -584,7 +982,13 @@
     "farm": "Guracho",
     "producer": "Nazimu Abamecha",
     "variety": "Heirloom",
-    "tasting_notes": ["Mango", "Peach", "Cherry", "Lemon", "Honey"],
+    "tasting_notes": [
+      "Mango",
+      "Peach",
+      "Cherry",
+      "Lemon",
+      "Honey"
+    ],
     "altitude_min_m": 2010,
     "altitude_max_m": 2010,
     "process": "Natural",
@@ -592,7 +996,13 @@
     "card_color_hex": "#9A2A4E",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 7.85,
+    "lon": 36.5167,
+    "geocode_precision": "town",
+    "geocode_query": "Gomma woreda, Jimma Zone, Oromia, Ethiopia.",
+    "geocode_display_name": "Gomma, Jimma, Ethiopia",
+    "geocode_source": "manual"
   },
   {
     "filename": "IMG_0767.jpg",
@@ -601,7 +1011,11 @@
     "farm": "Keramo Washing Station",
     "producer": "Daye Bensa",
     "variety": "JARC 74112",
-    "tasting_notes": ["Bergamot", "Blood orange", "Lemon zest"],
+    "tasting_notes": [
+      "Bergamot",
+      "Blood orange",
+      "Lemon zest"
+    ],
     "altitude_min_m": 2300,
     "altitude_max_m": 2300,
     "process": "Washed",
@@ -609,7 +1023,13 @@
     "card_color_hex": "#E8C547",
     "stamp_motif": null,
     "language": "en",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": 6.6507504,
+    "lon": 38.4796794,
+    "geocode_precision": "town",
+    "geocode_query": "Sidama, Ethiopia",
+    "geocode_display_name": "ሲዳማ ክልል Sidama سيداما, ኢትዮጵያ",
+    "geocode_source": "nominatim"
   },
   {
     "filename": "IMG_0768.jpg",
@@ -618,7 +1038,13 @@
     "farm": "Mwasa 129",
     "producer": "Mwasa Cooperative",
     "variety": "Red Bourbon",
-    "tasting_notes": ["Tangerine", "Red berries", "Strawberry jam", "Vanilla", "Cream milky chocolate"],
+    "tasting_notes": [
+      "Tangerine",
+      "Red berries",
+      "Strawberry jam",
+      "Vanilla",
+      "Cream milky chocolate"
+    ],
     "altitude_min_m": 1650,
     "altitude_max_m": 1650,
     "process": "Washed",
@@ -626,6 +1052,12 @@
     "card_color_hex": "#F0C13A",
     "stamp_motif": null,
     "language": "pt",
-    "card_design": "header-bar"
+    "card_design": "header-bar",
+    "lat": -2.45,
+    "lon": 28.9833,
+    "geocode_precision": "town",
+    "geocode_query": "Nyamasheke District, Western Province, Rwanda.",
+    "geocode_display_name": "Nyamasheke, Western Province, Rwanda",
+    "geocode_source": "manual"
   }
 ]

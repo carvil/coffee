@@ -1,0 +1,81 @@
+{
+  "_comment": "Manual coordinate overrides for entries where Nominatim failed or matched the wrong place. Town/region centroids picked from public coffee-origin references. Format: {filename: {lat, lon, precision, note, display_name}}",
+
+  "IMG_0740.jpg": {
+    "lat": 6.4500, "lon": 38.2700,
+    "precision": "town",
+    "note": "Bensa woreda centroid (Sidama Region). Shantawane WS sits in Bensa.",
+    "display_name": "Bensa, Sidama, Ethiopia"
+  },
+  "IMG_0742.jpg": {
+    "lat": 6.3142, "lon": -76.1311,
+    "precision": "town",
+    "note": "Urrao town, Antioquia. Card lists 'URRAO, ANTIOQUIA'; Nominatim matched a different 'El Vergel' vereda in error.",
+    "display_name": "Urrao, Antioquia, Colombia"
+  },
+  "IMG_0745.jpg": {
+    "lat": 6.1620, "lon": 38.2056,
+    "precision": "town",
+    "note": "Yirgacheffe town, Gedeo Zone, Ethiopia.",
+    "display_name": "Yirgacheffe, Gedeo Zone, Ethiopia"
+  },
+  "IMG_0747.jpg": {
+    "lat": 6.1300, "lon": 38.4800,
+    "precision": "town",
+    "note": "Uraga, Guji Zone, Oromia, Ethiopia.",
+    "display_name": "Uraga, Guji, Oromia, Ethiopia"
+  },
+  "IMG_0755.jpg": {
+    "lat": -0.5310, "lon": 37.4502,
+    "precision": "town",
+    "note": "Embu town, Embu County, Kenya. Gakundu Coffee Factory sits in this county.",
+    "display_name": "Embu, Embu County, Kenya"
+  },
+  "IMG_0757.jpg": {
+    "lat": 1.8590, "lon": -76.0420,
+    "precision": "town",
+    "note": "Pitalito municipality, Huila — Bruselas is a vereda within Pitalito, the main coffee town.",
+    "display_name": "Pitalito (Bruselas vereda), Huila, Colombia"
+  },
+  "IMG_0759.jpg": {
+    "lat": 15.4040, "lon": -91.9450,
+    "precision": "town",
+    "note": "Cuilco municipality, Huehuetenango. Card says 'Cuilco Oaxaqueño'.",
+    "display_name": "Cuilco, Huehuetenango, Guatemala"
+  },
+  "IMG_0764.jpg": {
+    "lat": 6.7167, "lon": 38.8167,
+    "precision": "town",
+    "note": "Nensebo woreda, West Arsi Zone, Oromia.",
+    "display_name": "Nensebo, West Arsi, Ethiopia"
+  },
+  "IMG_0765.jpg": {
+    "lat": 13.7719, "lon": -88.1067,
+    "precision": "region",
+    "note": "Morazán department centroid, El Salvador. La Montañita is a small hamlet.",
+    "display_name": "Morazán, El Salvador"
+  },
+  "IMG_0766.jpg": {
+    "lat": 7.8500, "lon": 36.5167,
+    "precision": "town",
+    "note": "Gomma woreda, Jimma Zone, Oromia, Ethiopia.",
+    "display_name": "Gomma, Jimma, Ethiopia"
+  },
+  "IMG_0768.jpg": {
+    "lat": -2.4500, "lon": 28.9833,
+    "precision": "town",
+    "note": "Nyamasheke District, Western Province, Rwanda.",
+    "display_name": "Nyamasheke, Western Province, Rwanda"
+  },
+  "IMG_0753.jpg": {
+    "lat": 4.6167, "lon": 96.7833,
+    "precision": "town",
+    "note": "Pegasing District, Central Aceh Regency, Aceh — heart of Gayo coffee region near Takengon.",
+    "display_name": "Pegasing, Aceh, Indonesia"
+  },
+
+  "_review_notes": {
+    "IMG_0748.jpg": "Nominatim matched 'Puerto Limón, Putumayo' (Amazonia, far south). For a Pink Bourbon producer, this could be Cauca/Tolima instead. Leaving as-is but flagged.",
+    "IMG_0749.jpg": "El Panal — fell back to Huehuetenango city centroid. Card variant IMG_0758 has more specific 'La Libertad' which placed at (15.51, -91.87). Same coffee, two pins ~30km apart. Could harmonize."
+  }
+}
