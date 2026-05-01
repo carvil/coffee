@@ -1,0 +1,19 @@
+# Card images — large, personal, regeneratable from physical cards
+cards/
+
+# Virtual env
+.venv/
+
+# Extracted dataset is committed for snapshot/version history
+# (uncomment to ignore again)
+# data/
+
+# Generated artwork outputs
+output/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
