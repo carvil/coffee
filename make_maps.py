@@ -192,14 +192,14 @@ def place_labels(ax, pins, color, extent, style, min_step_lat=1.0, force_side=No
             # left column → ha="right" (text extends LEFT from col_x)
             # right column → ha="left"  (text extends RIGHT from col_x)
             ha = "right" if anchor == "left" else "left"
-            ax.text(col_x, ly + 0.1, farm, fontsize=6.2, ha=ha, va="bottom",
+            ax.text(col_x, ly + 0.1, farm, fontsize=7.1, ha=ha, va="bottom",
                     color=style["label_dark"], fontfamily="sans-serif",
                     fontweight="medium", zorder=8)
-            ax.text(col_x, ly - 0.05, label_sub, fontsize=4.8, ha=ha, va="top",
+            ax.text(col_x, ly - 0.05, label_sub, fontsize=5.5, ha=ha, va="top",
                     color=style["label_mid"], fontfamily="sans-serif", zorder=8)
             if variety:
                 tracked = " ".join(variety.upper())
-                ax.text(col_x, ly - 0.42, tracked, fontsize=3.7, ha=ha, va="top",
+                ax.text(col_x, ly - 0.42, tracked, fontsize=4.25, ha=ha, va="top",
                         color=color, fontfamily="sans-serif", zorder=8)
 
     stack(left, left_col_x, "left")
@@ -274,17 +274,17 @@ def render_region(region_key, coffees, countries, style_name):
 
     # Title block
     fig.text(0.5, 0.945, cfg["title"], ha="center", va="top",
-             fontsize=30, color=color, fontfamily="sans-serif",
+             fontsize=34.5, color=color, fontfamily="sans-serif",
              fontweight=style["title_weight"])
     fig.text(0.5, 0.905, cfg["subtitle"], ha="center", va="top",
-             fontsize=10.5, color=style["label_dark"],
+             fontsize=12, color=style["label_dark"],
              fontfamily="sans-serif", fontweight="light")
 
     # Footer — count + signature
     n = len(pins)
     fig.text(0.5, 0.035,
              f"{n}  COFFEES   ·   COLLECTED FROM SENZU COFFEE ROASTERS   ·   ROASTED IN PORTO",
-             ha="center", va="bottom", fontsize=7, color=style["label_mid"],
+             ha="center", va="bottom", fontsize=8, color=style["label_mid"],
              fontfamily="sans-serif")
 
     out = OUTPUT / f"map_{region_key}_{style_name}"
