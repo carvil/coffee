@@ -34,10 +34,10 @@ MARGIN_SIDE_MM = 26
 PAPER = (250, 248, 243)
 INK_DARK = (40, 22, 18)
 
-# Senzu palette tiered by frequency
-COLOR_HOT  = "#5A1A28"   # deep wine — words appearing 5+ times
-COLOR_MID  = "#3A1F18"   # espresso brown — 2-4 times
-COLOR_COOL = "#B5734F"   # terracotta — once
+# Senzu palette tiered by frequency — high-contrast: black → wine → terracotta
+COLOR_HOT  = "#000000"   # pure black — words appearing 5+ times
+COLOR_MID  = "#5A1A28"   # deep wine — 2-4 times
+COLOR_COOL = "#9C5A3A"   # darker terracotta — once (more contrast on cream paper)
 
 TITLE_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 BODY_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
@@ -53,32 +53,64 @@ def build_corpus() -> Counter:
     return counter
 
 
+def bean_geometry(width: int, height: int) -> tuple[int, int, int, int]:
+    """Return (cx, bean_cy, bean_w, bean_h) for the vertical coffee-bean."""
+    avail_top = PX(MARGIN_TOP_MM + 38)
+    avail_bot = height - PX(MARGIN_BOTTOM_MM + 22)
+    avail_h = avail_bot - avail_top
+    avail_w = width - 2 * PX(MARGIN_SIDE_MM)
+    target_ratio = 1.5
+    if avail_h / avail_w > target_ratio:
+        bean_w, bean_h = avail_w, int(avail_w * target_ratio)
+    else:
+        bean_h, bean_w = avail_h, int(avail_h / target_ratio)
+    return width // 2, (avail_top + avail_bot) // 2, bean_w, bean_h
+
+
 def build_mask(width: int, height: int) -> np.ndarray:
-    """Vertical coffee-bean silhouette mask.
+    """Solid coffee-bean silhouette mask. The crease is overlaid AFTER the
+    word cloud is rendered (see draw_bean_crease) so words pack densely and
+    the seam cuts through them like the natural fold of a real bean.
 
     wordcloud convention: 255 (white) = no words; <255 (black) = words go here.
     """
     mask = Image.new("L", (width, height), 255)
     d = ImageDraw.Draw(mask)
-    cx, cy = width // 2, height // 2
-
-    # Reserve space for title (top) and footer (bottom)
-    avail_top = PX(MARGIN_TOP_MM + 38)
-    avail_bot = height - PX(MARGIN_BOTTOM_MM + 22)
-    avail_h = avail_bot - avail_top
-    avail_w = width - 2 * PX(MARGIN_SIDE_MM)
-
-    # Bean: vertical ellipse — taller than wide for portrait fill
-    bean_w = int(avail_w * 0.96)
-    bean_h = int(avail_h * 0.96)
-    bean_cy = (avail_top + avail_bot) // 2
-
+    cx, bean_cy, bean_w, bean_h = bean_geometry(width, height)
     d.ellipse(
         [cx - bean_w // 2, bean_cy - bean_h // 2,
          cx + bean_w // 2, bean_cy + bean_h // 2],
         fill=0,
     )
     return np.array(mask)
+
+
+def draw_bean_crease(img: Image.Image) -> Image.Image:
+    """Overlay the bean's seam — a curved S-line down the middle, drawn ON TOP
+    of the rendered word cloud. Cuts through whatever words are there, just
+    like the natural fold of a real coffee bean.
+    """
+    import math
+    width, height = img.size
+    cx, bean_cy, bean_w, bean_h = bean_geometry(width, height)
+    bean_top = bean_cy - bean_h // 2
+    bean_bot = bean_cy + bean_h // 2
+
+    draw = ImageDraw.Draw(img)
+    n_pts = 200
+    sway = bean_w * 0.06       # how far the seam swerves L/R
+    thickness = int(bean_w * 0.020)
+    pts = []
+    for i in range(n_pts):
+        t = i / (n_pts - 1)
+        # Gently curve from top tip → through middle → to bottom tip
+        # Stay almost on-axis at the tips, sway near the middle
+        eased = math.sin(t * math.pi)            # 0 at tips, 1 at middle
+        x_offset = int(math.sin(t * math.pi * 1.1) * sway * eased)
+        y = bean_top + int(t * bean_h)
+        pts.append((cx + x_offset, y))
+    draw.line(pts, fill=COLOR_HOT, width=thickness, joint="curve")
+    return img
 
 
 def make_color_func(counter: Counter):
@@ -138,7 +170,7 @@ def main() -> int:
         background_color="rgb(250,248,243)",
         color_func=make_color_func(counter),
         font_path=BODY_FONT_PATH,
-        prefer_horizontal=0.85,        # most words horizontal
+        prefer_horizontal=0.55,        # ~45% rotated for more dynamic feel
         max_words=200,
         relative_scaling=0.55,         # scale by frequency
         min_font_size=10,
@@ -150,6 +182,7 @@ def main() -> int:
     wc.generate_from_frequencies(counter)
 
     img = wc.to_image()
+    img = draw_bean_crease(img)
     img = render_overlays(img)
 
     out = OUTPUT / "wordcloud_v1.png"
