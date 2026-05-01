@@ -19,34 +19,33 @@ DATA = ROOT / "data"
 OUTPUT = ROOT / "output"
 OUTPUT.mkdir(exist_ok=True)
 
-# ---- Page setup ----
-# A2 portrait, in mm. We render at MM_PER_PX so the final raster is print-grade.
-PAGE_W_MM, PAGE_H_MM = 420, 594  # A2 portrait
-DPI = 220
+# ---- Page setup: A3 portrait ----
+PAGE_W_MM, PAGE_H_MM = 297, 420
+DPI = 260
 MM_PER_INCH = 25.4
 PX = lambda mm: int(round(mm / MM_PER_INCH * DPI))
 PAGE_W_PX, PAGE_H_PX = PX(PAGE_W_MM), PX(PAGE_H_MM)
 
-# Margins for title + footer (where no text fill happens)
-MARGIN_TOP_MM = 40
-MARGIN_BOTTOM_MM = 30
-MARGIN_SIDE_MM = 35
+MARGIN_TOP_MM = 32
+MARGIN_BOTTOM_MM = 26
+MARGIN_SIDE_MM = 28
 
 # Body text
 FONT_PATH = "/System/Library/Fonts/SFNSMono.ttf"
-FONT_SIZE_PT = 7.0
-LINE_HEIGHT_FACTOR = 1.05  # tight — we want the lines to read as a solid block
+FONT_SIZE_PT = 6.4
+LINE_HEIGHT_FACTOR = 1.04
 
 # Title typography
 TITLE_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 TITLE_TEXT = "37 COFFEES"
 SUBTITLE_TEXT = "SENZU COFFEE ROASTERS · ROASTED IN PORTO"
 
-# Colors
-PAPER = (250, 248, 243)        # warm off-white
-INK = (24, 12, 8)              # very dark warm-brown
-SILHOUETTE_TINT = (235, 228, 215)  # very faint warm tint behind the text
-CONTEXT_LINE = (200, 195, 185)
+# Colors — inverted from v1: deep Senzu burgundy silhouette, cream text inside.
+# The deep wine echoes the Palermo / El Panal cards, darkened for espresso vibe.
+PAPER = (250, 248, 243)
+SILHOUETTE_FILL = (90, 26, 40)   # #5A1A28 deep wine — the saturated block
+INK_INSIDE = (250, 248, 243)     # cream/paper text inside the silhouette
+INK_OUTSIDE = (40, 22, 18)       # near-black for title/footer outside
 
 
 def pt_to_px(pt: float) -> int:
@@ -79,106 +78,107 @@ def build_corpus(coffees: list[dict]) -> str:
 # ---- Silhouette: V60 dripper + carafe ----
 
 def build_silhouette(width: int, height: int) -> Image.Image:
-    """Return an L-mode mask where 255 = where text goes, 0 = empty paper.
+    """Espresso cup, side view, with saucer, handle, and steam wisps.
 
-    Layered composition (top to bottom):
-        1. V60 rim (handle/lip)
-        2. V60 cone (filter holder, tapers down)
-        3. small gap with a drip
-        4. Carafe mouth (narrower than body)
-        5. Carafe body (cylinder with rounded bottom)
-        6. Pour spout (triangular beak, right side)
-        7. Saucer
+    255 = silhouette (gets filled in the saturated color), 0 = paper.
     """
+    import math
     mask = Image.new("L", (width, height), 0)
     d = ImageDraw.Draw(mask)
-
     cx = width // 2
-    top_y = PX(MARGIN_TOP_MM + 60)
 
-    # Sizes in mm
-    rim_w_mm, rim_h_mm = 230, 12
-    cone_top_w_mm, cone_bot_w_mm, cone_h_mm = 215, 38, 125
-    drip_gap_mm = 18                   # air between cone tip and carafe
-    carafe_mouth_w_mm, carafe_mouth_h_mm = 175, 26
-    carafe_body_w_mm, carafe_body_h_mm = 230, 240
-    spout_w_mm, spout_h_mm = 32, 36
-    saucer_w_mm, saucer_h_mm = 290, 10
-    body_radius_mm = 28
-    mouth_radius_mm = 6
+    # Layout
+    top_y = PX(MARGIN_TOP_MM + 18)
+    bottom_y = height - PX(MARGIN_BOTTOM_MM + 14)
 
-    # Y coordinates
-    rim_y0 = top_y
-    rim_y1 = rim_y0 + PX(rim_h_mm)
-    cone_y0 = rim_y1
-    cone_y1 = cone_y0 + PX(cone_h_mm)
-    drip_y0 = cone_y1
-    drip_y1 = drip_y0 + PX(drip_gap_mm)
-    mouth_y0 = drip_y1
-    mouth_y1 = mouth_y0 + PX(carafe_mouth_h_mm)
-    body_y0 = mouth_y1 - PX(6)         # body slightly overlaps mouth bottom
-    body_y1 = body_y0 + PX(carafe_body_h_mm)
-    saucer_y0 = body_y1
-    saucer_y1 = saucer_y0 + PX(saucer_h_mm)
+    # Sizes (mm)
+    cup_top_w = 130
+    cup_bot_w = 95
+    cup_h = 130
+    saucer_w = 215
+    saucer_h = 18
+    handle_outer_d = 64
+    handle_inner_d = 36
+    handle_offset_mm = 8           # how far handle center sits past cup edge
 
-    # ---- V60 rim ----
-    d.rounded_rectangle(
-        [cx - PX(rim_w_mm) // 2, rim_y0, cx + PX(rim_w_mm) // 2, rim_y1],
-        radius=PX(4), fill=255,
-    )
+    steam_count = 3
+    steam_amplitude_mm = 12
+    steam_height_mm = 110
+    steam_thickness_mm = 12
+    steam_top_gap_mm = 30          # gap between cup rim and start of steam
 
-    # ---- V60 cone ----
-    d.polygon([
-        (cx - PX(cone_top_w_mm) // 2, cone_y0),
-        (cx + PX(cone_top_w_mm) // 2, cone_y0),
-        (cx + PX(cone_bot_w_mm) // 2, cone_y1),
-        (cx - PX(cone_bot_w_mm) // 2, cone_y1),
+    # Position cup+saucer centered vertically, leaving room above for steam
+    composition_h = PX(steam_height_mm + steam_top_gap_mm + cup_h + saucer_h)
+    available_h = bottom_y - top_y
+    block_top = top_y + (available_h - composition_h) // 2
+
+    steam_y0 = block_top
+    steam_y1 = steam_y0 + PX(steam_height_mm)
+    cup_y0 = steam_y1 + PX(steam_top_gap_mm)
+    cup_y1 = cup_y0 + PX(cup_h)
+    saucer_y0 = cup_y1
+    saucer_y1 = saucer_y0 + PX(saucer_h)
+
+    # ---- Steam wisps (drawn first; cup overlaps the bottom) ----
+    # 3 wavy plumes that sway side-to-side, getting thinner and sparser at top
+    for i in range(steam_count):
+        # Each wisp slightly different x, phase, height
+        x_offset = (i - (steam_count - 1) / 2) * PX(22)
+        phase = i * 1.7
+        # Build polygon of wisp by following sinusoidal centerline
+        n_pts = 80
+        pts_left = []
+        pts_right = []
+        for j in range(n_pts):
+            t = j / (n_pts - 1)
+            y = steam_y1 - t * PX(steam_height_mm)
+            # Amplitude grows toward top (more dramatic at the tip)
+            amp = PX(steam_amplitude_mm) * (0.4 + 0.9 * t)
+            sway = amp * math.sin(t * math.pi * 1.6 + phase)
+            # Thickness tapers toward top (thinner higher up)
+            thickness = PX(steam_thickness_mm) * (1.0 - 0.85 * t)
+            cx_w = cx + x_offset + sway
+            pts_left.append((cx_w - thickness / 2, y))
+            pts_right.append((cx_w + thickness / 2, y))
+        wisp = pts_left + list(reversed(pts_right))
+        d.polygon(wisp, fill=255)
+
+    # ---- Cup body ----
+    # Trapezoid (slightly wider at top), with a small rounded bottom.
+    cup_pts = [
+        (cx - PX(cup_top_w) // 2, cup_y0),
+        (cx + PX(cup_top_w) // 2, cup_y0),
+        (cx + PX(cup_bot_w) // 2, cup_y1),
+        (cx - PX(cup_bot_w) // 2, cup_y1),
+    ]
+
+    # ---- Handle on right side (drawn before cup so cup hides the inner edge) ----
+    handle_cx = cx + PX(cup_top_w) // 2 + PX(handle_offset_mm) - PX(2)
+    handle_cy = cup_y0 + PX(cup_h * 0.55)
+    d.ellipse([
+        handle_cx - PX(handle_outer_d) // 2, handle_cy - PX(handle_outer_d) // 2,
+        handle_cx + PX(handle_outer_d) // 2, handle_cy + PX(handle_outer_d) // 2,
     ], fill=255)
+    d.ellipse([
+        handle_cx - PX(handle_inner_d) // 2, handle_cy - PX(handle_inner_d) // 2,
+        handle_cx + PX(handle_inner_d) // 2, handle_cy + PX(handle_inner_d) // 2,
+    ], fill=0)
 
-    # ---- Drip in the air-gap ----
-    drip_w = PX(8)
-    drip_h = PX(drip_gap_mm - 4)
-    drip_x0 = cx - drip_w // 2
-    drip_y_mid = (drip_y0 + drip_y1) // 2
-    d.ellipse(
-        [drip_x0, drip_y_mid - drip_h // 2,
-         drip_x0 + drip_w, drip_y_mid + drip_h // 2],
-        fill=255,
-    )
+    # Cup on top covers the left portion of the handle's inner cutout
+    d.polygon(cup_pts, fill=255)
 
-    # ---- Carafe body ----
-    body_x0 = cx - PX(carafe_body_w_mm) // 2
-    body_x1 = cx + PX(carafe_body_w_mm) // 2
-    d.rounded_rectangle(
-        [body_x0, body_y0, body_x1, body_y1],
-        radius=PX(body_radius_mm), fill=255,
-    )
+    # Small cap at the very top of the cup (rim line) — adds an espresso-cup "lip"
+    rim_h = PX(7)
+    d.rounded_rectangle([
+        cx - PX(cup_top_w + 8) // 2, cup_y0 - rim_h // 2,
+        cx + PX(cup_top_w + 8) // 2, cup_y0 + rim_h // 2,
+    ], radius=PX(3), fill=255)
 
-    # ---- Carafe mouth (narrower lip on top of body) ----
-    mouth_x0 = cx - PX(carafe_mouth_w_mm) // 2
-    mouth_x1 = cx + PX(carafe_mouth_w_mm) // 2
-    d.rounded_rectangle(
-        [mouth_x0, mouth_y0, mouth_x1, mouth_y1],
-        radius=PX(mouth_radius_mm), fill=255,
-    )
-
-    # ---- Pour spout — clear forward-pointing beak from upper-right ----
-    # Anchored on the body's right edge near the top, extending right.
-    sx_anchor = body_x1
-    sy_top = body_y0 + PX(8)
-    sy_bot = sy_top + PX(spout_h_mm)
-    d.polygon([
-        (sx_anchor - PX(8), sy_top),
-        (sx_anchor + PX(spout_w_mm), sy_top + PX(spout_h_mm * 0.55)),
-        (sx_anchor - PX(8), sy_bot),
-    ], fill=255)
-
-    # ---- Saucer ----
-    d.rounded_rectangle(
-        [cx - PX(saucer_w_mm) // 2, saucer_y0,
-         cx + PX(saucer_w_mm) // 2, saucer_y1],
-        radius=PX(2), fill=255,
-    )
+    # ---- Saucer — wide ellipse-like band ----
+    d.rounded_rectangle([
+        cx - PX(saucer_w) // 2, saucer_y0,
+        cx + PX(saucer_w) // 2, saucer_y1,
+    ], radius=PX(saucer_h // 2), fill=255)
 
     return mask
 
@@ -190,13 +190,15 @@ def typeset(mask: Image.Image, corpus: str, font: ImageFont.FreeTypeFont,
     """Walk the mask row-by-row at line_height intervals; for each row find
     the contiguous dark horizontal segments; fill each with characters from
     the corpus. Returns a final RGB image rendered on PAPER.
+
+    Inverted color scheme: silhouette is filled with SILHOUETTE_FILL, text
+    inside is rendered in INK_INSIDE (cream) for a card-like high-contrast look.
     """
     width, height = mask.size
     out = Image.new("RGB", (width, height), PAPER)
-    # Paint a very faint tint inside the silhouette so the shape reads as a
-    # block from afar even where text is sparse (e.g. line gaps, narrow rows).
-    tint = Image.new("RGB", (width, height), SILHOUETTE_TINT)
-    out.paste(tint, mask=mask)
+    # Solid fill of the silhouette with the saturated color
+    fill_layer = Image.new("RGB", (width, height), SILHOUETTE_FILL)
+    out.paste(fill_layer, mask=mask)
     draw = ImageDraw.Draw(out)
 
     mask_px = mask.load()
@@ -244,9 +246,9 @@ def typeset(mask: Image.Image, corpus: str, font: ImageFont.FreeTypeFont,
                 corpus_pos = len(wrap)
             else:
                 corpus_pos = (corpus_pos + n_chars) % corpus_len
-            # Draw text inside segment
+            # Draw text inside segment in cream — reads as engraved/embossed
             draw.text((x0, y + text_baseline_offset), text,
-                      font=font, fill=INK)
+                      font=font, fill=INK_INSIDE)
 
         y += line_height
 
@@ -257,19 +259,27 @@ def draw_overlays(img: Image.Image) -> Image.Image:
     """Draw title above and footer below the silhouette."""
     width, height = img.size
     draw = ImageDraw.Draw(img)
-    title_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(34))
-    sub_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(11))
+    title_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(28))
+    sub_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(9))
 
-    # Title near the top
-    title_y = PX(MARGIN_TOP_MM)
+    # Title in the deep silhouette color, near the top
+    title_y = PX(MARGIN_TOP_MM // 2)
     tw = draw.textlength(TITLE_TEXT, font=title_font)
-    draw.text(((width - tw) / 2, title_y), TITLE_TEXT, fill=INK, font=title_font)
+    draw.text(((width - tw) / 2, title_y), TITLE_TEXT,
+              fill=SILHOUETTE_FILL, font=title_font)
 
-    # Subtitle below title
-    sub_y = title_y + pt_to_px(38)
+    sub_y = title_y + pt_to_px(32)
     sw = draw.textlength(SUBTITLE_TEXT, font=sub_font)
     draw.text(((width - sw) / 2, sub_y), SUBTITLE_TEXT,
-              fill=CONTEXT_LINE, font=sub_font)
+              fill=INK_OUTSIDE, font=sub_font)
+
+    # Footer
+    footer_text = "37 SINGLE-ORIGIN COFFEES   ·   ROASTED IN PORTO"
+    foot_font = ImageFont.truetype(TITLE_FONT_PATH, pt_to_px(8))
+    fw = draw.textlength(footer_text, font=foot_font)
+    foot_y = height - PX(MARGIN_BOTTOM_MM // 2) - pt_to_px(10)
+    draw.text(((width - fw) / 2, foot_y), footer_text,
+              fill=INK_OUTSIDE, font=foot_font)
 
     return img
 
@@ -290,7 +300,7 @@ def main() -> int:
     out_png = OUTPUT / "micrography_v1.png"
     final.save(out_png, dpi=(DPI, DPI))
     print(f"  → {out_png}  ({final.size[0]}×{final.size[1]} px @ {DPI} dpi)")
-    print(f"  print size: {PAGE_W_MM}×{PAGE_H_MM} mm (A2 portrait)")
+    print(f"  print size: {PAGE_W_MM}×{PAGE_H_MM} mm (A3 portrait)")
 
     # Inspection helpers
     silhouette_preview = mask.convert("RGB")
