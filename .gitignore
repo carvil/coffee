@@ -8,8 +8,10 @@ cards/
 # (uncomment to ignore again)
 # data/
 
-# Generated artwork outputs
-output/
+# Generated artwork outputs (regeneratable from scripts)
+output/*
+# ...except the stamp templates — those are deliverables for the craft project
+!output/stamps/
 
 # macOS
 .DS_Store
