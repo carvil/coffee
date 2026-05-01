@@ -34,10 +34,11 @@ MARGIN_SIDE_MM = 26
 PAPER = (250, 248, 243)
 INK_DARK = (40, 22, 18)
 
-# Senzu palette tiered by frequency — high-contrast: black → wine → terracotta
-COLOR_HOT  = "#000000"   # pure black — words appearing 5+ times
-COLOR_MID  = "#5A1A28"   # deep wine — 2-4 times
-COLOR_COOL = "#9C5A3A"   # darker terracotta — once (more contrast on cream paper)
+# Senzu palette — four tiers: tasting notes (3 freq tiers) + context backdrop
+COLOR_HOT      = "#000000"   # tasting notes 5+ occurrences
+COLOR_MID      = "#5A1A28"   # tasting notes 2-4
+COLOR_COOL     = "#9C5A3A"   # tasting notes appearing once
+COLOR_CONTEXT  = "#B7A395"   # countries / regions / farms / varieties / processes
 
 TITLE_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 BODY_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
@@ -56,15 +57,50 @@ MERGE_TO = {
 }
 
 
-def build_corpus() -> Counter:
+def build_corpus() -> tuple[Counter, Counter]:
+    """Returns (tasting_counter, context_counter).
+
+    Tasting counter: every tasting note across every card, normalized + merged.
+    Context counter: countries, regions, farms, varieties, processes — used
+    to pad the cloud at smaller sizes for visual depth without competing
+    with the tasting notes.
+    """
     coffees = json.loads((DATA / "coffees.json").read_text())
-    counter: Counter = Counter()
+
+    tasting: Counter = Counter()
     for coffee in coffees:
         for note in coffee.get("tasting_notes", []):
-            normalized = " ".join(w.capitalize() for w in note.strip().split())
-            normalized = MERGE_TO.get(normalized, normalized)
-            counter[normalized] += 1
-    return counter
+            n = " ".join(w.capitalize() for w in note.strip().split())
+            n = MERGE_TO.get(n, n)
+            tasting[n] += 1
+
+    context: Counter = Counter()
+    for coffee in coffees:
+        if c := coffee.get("country"):
+            context[c.strip()] += 1
+        if r := coffee.get("region"):
+            for part in r.split(","):
+                p = part.strip()
+                if p:
+                    context[p] += 1
+        if f := coffee.get("farm"):
+            context[f.strip()] += 1
+        if v := coffee.get("variety"):
+            # Split multi-variety entries: "Ruiru 11, SL 28, and SL 34" -> 3 entries
+            for variety in v.replace(" and ", ",").split(","):
+                vn = variety.strip()
+                if vn:
+                    context[vn] += 1
+        if p := coffee.get("process"):
+            context[p.strip()] += 1
+
+    # Don't double-count words that show up in both (e.g., "Honey" is a
+    # tasting note and a process). Tasting wins.
+    for word in list(context.keys()):
+        if word in tasting:
+            del context[word]
+
+    return tasting, context
 
 
 def bean_geometry(width: int, height: int) -> tuple[int, int, int, int]:
@@ -179,20 +215,31 @@ def draw_bean_outline(img: Image.Image) -> Image.Image:
     return img
 
 
-def make_color_func(counter: Counter):
-    """Pick a Senzu color based on the word's frequency tier."""
+def make_color_func(tasting: Counter, context: Counter):
+    """Color a word by its category and frequency.
+
+    Tasting notes get the strong palette (black / wine / terracotta) by
+    frequency tier. Context words get a single muted tan so they read as
+    backdrop, never competing with the tasting notes for attention.
+    """
+    tasting_set = set(tasting.keys())
+
     def color_func(word, font_size, position, orientation, random_state, **kwargs):
-        freq = counter.get(word, 1)
-        if freq >= 5:
-            return COLOR_HOT
-        elif freq >= 2:
-            return COLOR_MID
+        if word in tasting_set:
+            freq = tasting[word]
+            if freq >= 5:
+                return COLOR_HOT
+            elif freq >= 2:
+                return COLOR_MID
+            else:
+                return COLOR_COOL
         else:
-            return COLOR_COOL
+            return COLOR_CONTEXT
     return color_func
 
 
-def render_overlays(img: Image.Image, counter: Counter) -> Image.Image:
+def render_overlays(img: Image.Image, tasting: Counter,
+                    context: Counter) -> Image.Image:
     """Add title and footer to the rendered word cloud image."""
     width, height = img.size
     draw = ImageDraw.Draw(img)
@@ -201,9 +248,8 @@ def render_overlays(img: Image.Image, counter: Counter) -> Image.Image:
     foot_font = ImageFont.truetype(TITLE_FONT_PATH, int(8 / 72 * DPI))
 
     title = "TASTING NOTES"
-    n_unique = len(counter)
-    n_total = sum(counter.values())
-    subtitle = f"37 COFFEES · {n_unique} DISTINCT FLAVOURS · {n_total} TOTAL"
+    subtitle = (f"37 COFFEES · {len(tasting)} DISTINCT FLAVOURS · "
+                f"{sum(tasting.values())} TOTAL")
 
     title_y = PX(MARGIN_TOP_MM // 2)
     tw = draw.textlength(title, font=title_font)
@@ -222,12 +268,22 @@ def render_overlays(img: Image.Image, counter: Counter) -> Image.Image:
 
 
 def main() -> int:
-    counter = build_corpus()
-    print(f"{len(counter)} unique notes, {sum(counter.values())} occurrences "
-          f"from {len(json.loads((DATA / 'coffees.json').read_text()))} coffees.")
-    print("\nTop 10:")
-    for note, n in counter.most_common(10):
+    tasting, context = build_corpus()
+    n_coffees = len(json.loads((DATA / "coffees.json").read_text()))
+    print(f"{len(tasting)} tasting notes, {sum(tasting.values())} occurrences "
+          f"from {n_coffees} coffees.")
+    print(f"{len(context)} context words (countries, regions, farms, varieties, processes).")
+    print("\nTop 10 tasting notes:")
+    for note, n in tasting.most_common(10):
         print(f"  {n:>2}  {note}")
+
+    # Combine into one frequency dict for wordcloud. Tasting notes use full
+    # frequency; context words are scaled down so they read as backdrop and
+    # never get bigger than the major tasting notes.
+    combined = dict(tasting)
+    context_scale = 0.30
+    for word, freq in context.items():
+        combined[word] = freq * context_scale
 
     mask = build_mask(PAGE_W_PX, PAGE_H_PX)
 
@@ -236,21 +292,21 @@ def main() -> int:
         height=PAGE_H_PX,
         mask=mask,
         background_color="rgb(250,248,243)",
-        color_func=make_color_func(counter),
+        color_func=make_color_func(tasting, context),
         font_path=BODY_FONT_PATH,
-        prefer_horizontal=0.80,        # mostly horizontal — only a few vertical accents
-        max_words=200,
-        relative_scaling=0.55,         # scale by frequency
-        min_font_size=10,
-        max_font_size=int(220 / 72 * DPI),  # ~220pt for the largest
+        prefer_horizontal=0.80,
+        max_words=400,                 # ~88 tasting + ~120 context
+        relative_scaling=0.55,
+        min_font_size=8,
+        max_font_size=int(220 / 72 * DPI),
         random_state=42,
-        margin=4,                      # gap between words
-        collocations=False,            # don't merge multi-word phrases
+        margin=3,
+        collocations=False,
     )
-    wc.generate_from_frequencies(counter)
+    wc.generate_from_frequencies(combined)
 
     img = wc.to_image()
-    img = render_overlays(img, counter)
+    img = render_overlays(img, tasting, context)
 
     out = OUTPUT / "wordcloud_v1.png"
     img.save(out, dpi=(DPI, DPI))
