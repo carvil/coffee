@@ -42,7 +42,8 @@ REGIONS = {
                     "Democratic Republic of the Congo"],
         "extent": ((27.5, 43), (-3, 15.5)),
         "color": "#82213A",
-        "min_step_lat": 0.85,  # dense clusters need tight stacking
+        "min_step_lat": 0.85,
+        "force_side": "left",  # Ethiopia dominates the right; push all labels left
     },
     "central_america": {
         "title": "CENTRAL AMERICAN PACIFIC",
@@ -71,27 +72,33 @@ STYLES = {
     "soft": {
         "fill_alpha": 0.18,
         "country_outline_lw": 0.7,
+        "country_outline_color": None,  # use saturated color (handled in render)
         "context_outline": "#D8D5CC",
+        "context_outline_lw": 0.4,
         "pin_size": 5.0,
-        "pin_face": "color",         # filled in the saturated color
+        "pin_face": "color",
         "pin_edge": "white",
         "pin_edge_lw": 0.8,
         "leader_color": TEXT_MID,
         "leader_alpha": 0.7,
+        "leader_lw": 0.32,
         "title_weight": "bold",
         "label_dark": TEXT_DARK,
         "label_mid": TEXT_MID,
     },
     "bold": {
         "fill_alpha": 1.0,           # solid color block — Senzu-card style
-        "country_outline_lw": 0.0,   # the fill is the silhouette
-        "context_outline": "#C8C4BA",
-        "pin_size": 7.0,
-        "pin_face": "white",         # white-on-color, like the Senzu silhouettes
+        "country_outline_lw": 1.4,   # white border separates touching highlight countries
+        "country_outline_color": PAPER,
+        "context_outline": "#A8A39A",  # darker, more visible from afar
+        "context_outline_lw": 0.9,
+        "pin_size": 7.5,
+        "pin_face": "white",
         "pin_edge": "color",
         "pin_edge_lw": 1.0,
-        "leader_color": "#3A3A3A",
+        "leader_color": "#2A2A2A",
         "leader_alpha": 0.85,
+        "leader_lw": 0.45,
         "title_weight": "black",
         "label_dark": "#0A0A0A",
         "label_mid": "#444444",
@@ -127,17 +134,24 @@ def draw_country(ax, geom, fill=None, edge=None, linewidth=0.4, zorder=1, alpha=
                     solid_capstyle="round", solid_joinstyle="round")
 
 
-def place_labels(ax, pins, color, extent, style, min_step_lat=1.0):
+def place_labels(ax, pins, color, extent, style, min_step_lat=1.0, force_side=None):
     """Two label columns just outside the highlight extent. Country fill in
     the margin is masked by render_region, so labels sit on white space.
+
+    force_side='left' or 'right' overrides the longitude-based split and sends
+    every pin to that single column. Useful when the country geometry is
+    asymmetric (e.g. Ethiopia dominating the right side of East Africa).
     """
     (lon_min, lon_max), (lat_min, lat_max) = extent
     mid_lon = (lon_min + lon_max) / 2
 
-    left = [p for p in pins if p["lon"] < mid_lon]
-    right = [p for p in pins if p["lon"] >= mid_lon]
-    left.sort(key=lambda p: -p["lat"])
-    right.sort(key=lambda p: -p["lat"])
+    if force_side == "left":
+        left, right = sorted(pins, key=lambda p: -p["lat"]), []
+    elif force_side == "right":
+        left, right = [], sorted(pins, key=lambda p: -p["lat"])
+    else:
+        left = sorted([p for p in pins if p["lon"] < mid_lon], key=lambda p: -p["lat"])
+        right = sorted([p for p in pins if p["lon"] >= mid_lon], key=lambda p: -p["lat"])
 
     span = lon_max - lon_min
     pad = span * 0.02
@@ -168,7 +182,9 @@ def place_labels(ax, pins, color, extent, style, min_step_lat=1.0):
             kink_x = col_x + (-pad * 0.5 if anchor == "left" else pad * 0.5)
             ax.plot([pin["lon"], kink_x, col_x],
                     [pin["lat"], ly, ly],
-                    color=style["leader_color"], linewidth=0.32, zorder=4,
+                    color=style["leader_color"],
+                    linewidth=style.get("leader_lw", 0.32),
+                    zorder=7,
                     solid_capstyle="round", solid_joinstyle="round",
                     alpha=style["leader_alpha"])
 
@@ -212,23 +228,24 @@ def render_region(region_key, coffees, countries, style_name):
     ax.set_aspect("equal", adjustable="box")
     ax.axis("off")
 
+    context_lw = style.get("context_outline_lw", 0.4)
     # Context countries — outline only
     for name in cfg["context"]:
         if name in countries:
             draw_country(ax, countries[name], fill=None,
-                         edge=style["context_outline"], linewidth=0.4, zorder=1)
+                         edge=style["context_outline"], linewidth=context_lw, zorder=1)
 
-    # Highlight countries — fill with country outline (or solid block in bold)
+    # Highlight countries — fill, with separate edge color (white in bold mode
+    # so internal country boundaries show against the colored block)
+    edge_color = style.get("country_outline_color") or color
     for name in cfg["highlight"]:
         if name in countries:
             draw_country(ax, countries[name],
-                         fill=color, edge=color,
+                         fill=color, edge=edge_color,
                          linewidth=style["country_outline_lw"],
                          zorder=2, alpha=style["fill_alpha"])
 
-    # Mask country fill that extends into the L/R label margins. We want
-    # the highlight extent to end cleanly at lon_min/lon_max so labels sit
-    # on paper, not on the colored block.
+    # Mask country fill that extends into the L/R label margins.
     xlim_lo, xlim_hi = ax.get_xlim()
     ax.fill([xlim_lo, lon_min, lon_min, xlim_lo],
             [lat_min - 5, lat_min - 5, lat_max + 5, lat_max + 5],
@@ -236,11 +253,11 @@ def render_region(region_key, coffees, countries, style_name):
     ax.fill([lon_max, xlim_hi, xlim_hi, lon_max],
             [lat_min - 5, lat_min - 5, lat_max + 5, lat_max + 5],
             color=PAPER, zorder=3, edgecolor="none")
-    # Re-draw context country outlines on top of the mask so they show in margins
+    # Re-draw context outlines on top of the mask so they show in margins
     for name in cfg["context"]:
         if name in countries:
             draw_country(ax, countries[name], fill=None,
-                         edge=style["context_outline"], linewidth=0.4, zorder=4)
+                         edge=style["context_outline"], linewidth=context_lw, zorder=4)
 
     # Pins — face/edge depends on style
     pin_face = color if style["pin_face"] == "color" else style["pin_face"]
@@ -250,9 +267,10 @@ def render_region(region_key, coffees, countries, style_name):
                 color=pin_face, markeredgecolor=pin_edge,
                 markeredgewidth=style["pin_edge_lw"], zorder=10)
 
-    # Labels with callouts. Per-region min_step.
+    # Labels with callouts. Per-region min_step + optional force_side.
     place_labels(ax, pins, color, cfg["extent"], style,
-                 min_step_lat=cfg.get("min_step_lat", 1.0))
+                 min_step_lat=cfg.get("min_step_lat", 1.0),
+                 force_side=cfg.get("force_side"))
 
     # Title block
     fig.text(0.5, 0.945, cfg["title"], ha="center", va="top",
@@ -277,6 +295,13 @@ def render_region(region_key, coffees, countries, style_name):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--styles", nargs="+", default=["bold"],
+                        choices=list(STYLES),
+                        help="Which style preset(s) to render. Default: bold only.")
+    args = parser.parse_args()
+
     coffees = json.loads((DATA / "coffees.json").read_text())
     countries = load_countries()
     print(f"Loaded {len(coffees)} coffees, {len(countries)} country geometries.\n")
@@ -284,7 +309,7 @@ def main():
     for region_key in REGIONS:
         cfg = REGIONS[region_key]
         n = sum(1 for c in coffees if c["country"] in cfg["highlight"])
-        for style_name in STYLES:
+        for style_name in args.styles:
             print(f"Rendering {region_key} ({n} pins) — {style_name}...")
             out = render_region(region_key, coffees, countries, style_name)
             print(f"  → {out}.pdf  +  {out}.png")
