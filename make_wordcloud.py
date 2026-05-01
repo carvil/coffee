@@ -82,20 +82,56 @@ def bean_geometry(width: int, height: int) -> tuple[int, int, int, int]:
 
 
 def build_mask(width: int, height: int) -> np.ndarray:
-    """Solid coffee-bean silhouette mask. The crease is overlaid AFTER the
-    word cloud is rendered (see draw_bean_crease) so words pack densely and
-    the seam cuts through them like the natural fold of a real bean.
+    """Coffee-bean silhouette mask, drawn parametrically.
 
-    wordcloud convention: 255 (white) = no words; <255 (black) = words go here.
+    The shape is a tapered oval (pinched slightly at the tips like a real
+    bean), with subtle low-frequency perturbations so the outline reads as
+    organic rather than a perfect ellipse. A thin S-curve channel runs down
+    the middle of the mask — words pack into the two lobes, and the empty
+    space between them IS the seam (no drawn line on top).
+
+    wordcloud convention: 255 (white) = no words; 0 (black) = words go here.
     """
+    import math
     mask = Image.new("L", (width, height), 255)
     d = ImageDraw.Draw(mask)
     cx, bean_cy, bean_w, bean_h = bean_geometry(width, height)
-    d.ellipse(
-        [cx - bean_w // 2, bean_cy - bean_h // 2,
-         cx + bean_w // 2, bean_cy + bean_h // 2],
-        fill=0,
-    )
+
+    # Parametric bean outline: ellipse with tapered tips + gentle organic wave
+    a = bean_w / 2
+    b = bean_h / 2
+    n_outline = 360
+    outline = []
+    for i in range(n_outline):
+        t = i / n_outline * 2 * math.pi   # ccw around perimeter
+        cos_t = math.cos(t)
+        sin_t = math.sin(t)
+        # Taper at top/bottom (where |cos_t| → 1)
+        taper = 1 - 0.20 * abs(cos_t) ** 3.5
+        # Subtle low-frequency perturbation — gives an organic edge
+        wave = 0.022 * math.sin(t * 3 + 0.7) + 0.014 * math.sin(t * 5 - 0.3)
+        # Slight asymmetry: left lobe a touch fuller than right
+        asymm = 1.04 if sin_t < 0 else 0.97
+        x = a * sin_t * taper * asymm * (1 + wave)
+        y = b * cos_t * (1 + wave * 0.4)
+        outline.append((cx + x, bean_cy + y))
+    d.polygon(outline, fill=0)
+
+    # Carve a thin S-curve channel down the middle (the seam, as empty space).
+    bean_top = bean_cy - int(b)
+    bean_bot = bean_cy + int(b)
+    n_pts = 220
+    sway = bean_w * 0.045
+    channel_thickness = max(3, int(bean_w * 0.018))   # thin
+    channel_pts = []
+    for i in range(n_pts):
+        t = i / (n_pts - 1)
+        eased = math.sin(t * math.pi)                  # 0 at tips, 1 at middle
+        x_offset = int(math.sin(t * math.pi * 1.1) * sway * eased)
+        y = bean_top + int(t * (bean_bot - bean_top))
+        channel_pts.append((cx + x_offset, y))
+    d.line(channel_pts, fill=255, width=channel_thickness)
+
     return np.array(mask)
 
 
@@ -214,8 +250,6 @@ def main() -> int:
     wc.generate_from_frequencies(counter)
 
     img = wc.to_image()
-    img = draw_bean_outline(img)
-    img = draw_bean_crease(img)
     img = render_overlays(img, counter)
 
     out = OUTPUT / "wordcloud_v1.png"
