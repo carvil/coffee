@@ -43,12 +43,26 @@ TITLE_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 BODY_FONT_PATH = "/System/Library/Fonts/Helvetica.ttc"
 
 
+# Synonym merges — clean up near-duplicates that come from inconsistent
+# tasting-language across cards. Meaningful distinctions (Milk vs Dark
+# Chocolate, Plum vs Red Plum, Caramel variants) are preserved.
+MERGE_TO = {
+    "Raisins": "Raisin",
+    "Wine": "Winey",
+    "Winey Acidity": "Winey",
+    "Cacao": "Cocoa",
+    "Cream Milky Chocolate": "Milk Chocolate",
+    "Creamy Dark Chocolate": "Dark Chocolate",
+}
+
+
 def build_corpus() -> Counter:
     coffees = json.loads((DATA / "coffees.json").read_text())
     counter: Counter = Counter()
     for coffee in coffees:
         for note in coffee.get("tasting_notes", []):
             normalized = " ".join(w.capitalize() for w in note.strip().split())
+            normalized = MERGE_TO.get(normalized, normalized)
             counter[normalized] += 1
     return counter
 
@@ -85,10 +99,13 @@ def build_mask(width: int, height: int) -> np.ndarray:
     return np.array(mask)
 
 
+SEAM_COLOR = (90, 56, 44)         # warm muted brown — softer than pure black
+OUTLINE_COLOR = (90, 56, 44)
+
+
 def draw_bean_crease(img: Image.Image) -> Image.Image:
-    """Overlay the bean's seam — a curved S-line down the middle, drawn ON TOP
-    of the rendered word cloud. Cuts through whatever words are there, just
-    like the natural fold of a real coffee bean.
+    """Overlay a subtle curved seam down the bean's middle — drawn ON TOP of
+    the rendered cloud so it reads as the bean's natural fold.
     """
     import math
     width, height = img.size
@@ -97,19 +114,32 @@ def draw_bean_crease(img: Image.Image) -> Image.Image:
     bean_bot = bean_cy + bean_h // 2
 
     draw = ImageDraw.Draw(img)
-    n_pts = 200
-    sway = bean_w * 0.06       # how far the seam swerves L/R
-    thickness = int(bean_w * 0.020)
+    n_pts = 240
+    sway = bean_w * 0.05
+    thickness = max(2, int(bean_w * 0.006))   # was 0.020 — much thinner
     pts = []
     for i in range(n_pts):
         t = i / (n_pts - 1)
-        # Gently curve from top tip → through middle → to bottom tip
-        # Stay almost on-axis at the tips, sway near the middle
-        eased = math.sin(t * math.pi)            # 0 at tips, 1 at middle
+        eased = math.sin(t * math.pi)
         x_offset = int(math.sin(t * math.pi * 1.1) * sway * eased)
         y = bean_top + int(t * bean_h)
         pts.append((cx + x_offset, y))
-    draw.line(pts, fill=COLOR_HOT, width=thickness, joint="curve")
+    draw.line(pts, fill=SEAM_COLOR, width=thickness, joint="curve")
+    return img
+
+
+def draw_bean_outline(img: Image.Image) -> Image.Image:
+    """Trace a thin border around the bean to define the silhouette edge."""
+    width, height = img.size
+    cx, bean_cy, bean_w, bean_h = bean_geometry(width, height)
+    draw = ImageDraw.Draw(img)
+    thickness = max(2, int(bean_w * 0.008))
+    draw.ellipse(
+        [cx - bean_w // 2, bean_cy - bean_h // 2,
+         cx + bean_w // 2, bean_cy + bean_h // 2],
+        outline=OUTLINE_COLOR,
+        width=thickness,
+    )
     return img
 
 
@@ -126,7 +156,7 @@ def make_color_func(counter: Counter):
     return color_func
 
 
-def render_overlays(img: Image.Image) -> Image.Image:
+def render_overlays(img: Image.Image, counter: Counter) -> Image.Image:
     """Add title and footer to the rendered word cloud image."""
     width, height = img.size
     draw = ImageDraw.Draw(img)
@@ -135,7 +165,9 @@ def render_overlays(img: Image.Image) -> Image.Image:
     foot_font = ImageFont.truetype(TITLE_FONT_PATH, int(8 / 72 * DPI))
 
     title = "TASTING NOTES"
-    subtitle = "37 COFFEES · 94 DISTINCT FLAVOURS · 173 TOTAL"
+    n_unique = len(counter)
+    n_total = sum(counter.values())
+    subtitle = f"37 COFFEES · {n_unique} DISTINCT FLAVOURS · {n_total} TOTAL"
 
     title_y = PX(MARGIN_TOP_MM // 2)
     tw = draw.textlength(title, font=title_font)
@@ -170,7 +202,7 @@ def main() -> int:
         background_color="rgb(250,248,243)",
         color_func=make_color_func(counter),
         font_path=BODY_FONT_PATH,
-        prefer_horizontal=0.55,        # ~45% rotated for more dynamic feel
+        prefer_horizontal=0.80,        # mostly horizontal — only a few vertical accents
         max_words=200,
         relative_scaling=0.55,         # scale by frequency
         min_font_size=10,
@@ -182,8 +214,9 @@ def main() -> int:
     wc.generate_from_frequencies(counter)
 
     img = wc.to_image()
+    img = draw_bean_outline(img)
     img = draw_bean_crease(img)
-    img = render_overlays(img)
+    img = render_overlays(img, counter)
 
     out = OUTPUT / "wordcloud_v1.png"
     img.save(out, dpi=(DPI, DPI))
